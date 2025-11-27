@@ -1,8 +1,8 @@
 import { Button, TextField } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useWaitForTransactionReceipt, useWriteContract } from "wagmi";
-import { contractABI2, contractAddress } from "../const/ContractConst";
-import styles from '../styles/MintView.module.css';
+import { contractABI, contractAddress } from "../const/ContractConst";
+import styles from '../styles/view.module.css';
 import { eventBus, MINT_SUCCESS_EVENT } from "../tools/EventBus";
 
 export function MintView()  {
@@ -44,7 +44,7 @@ export function MintView()  {
 
         writeContract({
             address: contractAddress,
-            abi: contractABI2,
+            abi: contractABI,
             functionName: 'mint',
             args: [BigInt(amount * 1e18)],
         });
@@ -63,7 +63,7 @@ export function MintView()  {
     }
 
     return (
-        <div className={styles.mint_view}>
+        <div className={styles.view}>
             <TextField type='number' onChange={onChangeAccount} sx={{minWidth: '25.5rem'}} style={{margin: '0rem 1rem'}} id="outlined-basic" label="铸币数量" variant="outlined" />
             <Button style={{margin: '0rem 1rem'}} variant="contained" onClick={onClickMint}>
                 开始铸币

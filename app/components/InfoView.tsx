@@ -3,12 +3,11 @@
 import { useAccount, useBalance } from "wagmi"
 import { formatUnits } from 'viem'
 
-export const Info = ()=>{
+export const InfoView = ()=>{
 
     const {address} = useAccount();
     const {data, isLoading, isError} = useBalance({address});
 
-    // wagmi 的 useBalance 现在可能不提供 `formatted`，因此使用原始 value + decimals 手动格式化
     const balance = data?.value ? formatUnits(data.value, data.decimals ?? 18) : undefined;
 
     let balanceStr: string = '';
@@ -32,8 +31,8 @@ export const Info = ()=>{
 
     return (
         <div>
-            <h1>address: {address}</h1>
-            <h1>balance: {balanceStr}</h1>
+            <h1>my_address: {address}</h1>
+            <h1>eth_balance: {balanceStr}</h1>
         </div>
     )
 }

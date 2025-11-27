@@ -1,11 +1,11 @@
 
 import { Button, TextField} from "@mui/material";
-import styles from '../styles/SendTransactionView.module.css'
+import styles from '../styles/view.module.css'
 import { useState } from "react";
 import { useAccount, useBalance, useSendTransaction, useWaitForTransactionReceipt } from "wagmi";
 import { isAddress, parseEther } from "viem";
 
-export const SendTransactionView = ()=>{
+export const TransactView = ()=>{
     // 状态管理：接收方地址和转账金额
     const {address} = useAccount();
     const [recipient, setRecipient] = useState('');
@@ -19,7 +19,11 @@ export const SendTransactionView = ()=>{
 
     const {data: balanceData} = useBalance({address});
 
-    const onClickBalanceOf = ()=>{
+    if (isReceiptSuccess) {
+        alert("转账成功！");
+    }
+
+    const onClickTransact = ()=>{
         console.log(recipient, amount);
         if (!isAddress(recipient)) {
             alert('请输入有效的以太坊地址');
@@ -61,13 +65,17 @@ export const SendTransactionView = ()=>{
     }
 
     return (
-        <div className={styles.transaction_status}>
-            <TextField onChange={onChangeAccount} sx={{minWidth: '25.5rem'}} style={{margin: '0rem 1rem'}} id="outlined-basic" label="转账目标账号" variant="outlined" />
-            <TextField type="number" onChange={onChangeAmount} sx={{minWidth: '5rem'}} style={{margin: '0rem 1rem'}} id="outlined-basic" label="转账金额" variant="outlined" />
-            <Button style={{margin: '0rem 1rem'}} variant="contained" onClick={onClickBalanceOf}>
-                开始转账
-            </Button>
-            <h1>{isReceiptSuccess ? '转账成功' : isReceiptError ? `转账失败: ${receiptError?.message}` : ''}</h1>
+        <div>
+            <h1 className={styles.title}>发起以太坊转账交易</h1>
+            <div className={styles.view}>
+                <TextField onChange={onChangeAccount} sx={{minWidth: '25.5rem'}} style={{margin: '0rem 1rem'}} id="outlined-basic" label="转账目标账号" variant="outlined" />
+                <TextField type="number" onChange={onChangeAmount} sx={{minWidth: '5rem'}} style={{margin: '0rem 1rem'}} id="outlined-basic" label="转账金额" variant="outlined" />
+                <Button style={{margin: '0rem 1rem'}} variant="contained" onClick={onClickTransact}>
+                    开始转账
+                </Button>
+                <h1>{isReceiptSuccess ? '转账成功' : isReceiptError ? `转账失败: ${receiptError?.message}` : ''}</h1>
+            </div>
         </div>
+        
     )
 }

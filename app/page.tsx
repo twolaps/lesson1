@@ -1,25 +1,27 @@
 'use client'
 
-import { ContractBalance } from "./components/ContractBalance";
-import { Header } from "./components/Header";
-import { Info } from "./components/Info";
+import { ContractBalanceView } from "./components/ContractBalanceView";
+import { ContractTransactView } from "./components/ContractTransactView";
+import { HeadView } from "./components/HeadView";
+import { InfoView } from "./components/InfoView";
 import { MintView } from "./components/MintView";
-import { SendTransactionView } from "./components/SendTransactionView";
+import { TransactView } from "./components/TransactView";
 import './globals.css';
 
 export default function Home() {
   return (
     <div>
-      <Header/>
+      <HeadView/>
       <hr/>
-      <Info/>
+      <InfoView/>
       <hr/>
-      <SendTransactionView/>
+      <TransactView/>
       <hr/>
-      <ContractBalance/>
+      <ContractBalanceView/>
       <hr/>
       <MintView/>
       <hr/>
+      <ContractTransactView/>
     </div>
   );
 }
