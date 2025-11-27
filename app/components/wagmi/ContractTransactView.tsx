@@ -3,7 +3,7 @@ import styles from '../styles/view.module.css'
 import { useEffect, useState } from "react";
 import { useAccount, useChainId, useReadContract, useWaitForTransactionReceipt, useWriteContract } from "wagmi";
 import { erc20Abi, isAddress, parseEther } from "viem";
-import { contractAddress } from "../const/ContractConst";
+import { contractAddress } from "../../const/ContractConst";
 
 export const ContractTransactView = () => {
 

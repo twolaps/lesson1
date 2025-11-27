@@ -1,6 +1,6 @@
 import { erc20Abi, formatUnits } from "viem";
 import { useAccount, useChainId, useReadContract, useWatchContractEvent } from "wagmi";
-import { contractABI } from "../const/ContractConst";
+import { contractABI } from "../../const/ContractConst";
 
 export const ContractBalanceView = ()=>{
     const contractAddress = '0x287b3e9E93f05D361A28985635ed7Db5163b8381';

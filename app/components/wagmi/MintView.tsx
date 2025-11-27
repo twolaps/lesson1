@@ -1,7 +1,7 @@
 import { Button, TextField } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useWaitForTransactionReceipt, useWriteContract } from "wagmi";
-import { contractABI, contractAddress } from "../const/ContractConst";
+import { contractABI, contractAddress } from "../../const/ContractConst";
 import styles from '../styles/view.module.css';
 
 export function MintView()  {

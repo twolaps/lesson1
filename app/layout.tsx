@@ -6,7 +6,7 @@ import { getDefaultConfig, RainbowKitProvider } from '@rainbow-me/rainbowkit';
 import { http, WagmiProvider } from 'wagmi';
 import { mainnet, sepolia } from 'wagmi/chains';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'; // 注意导入来源
-import { HeadView } from "./components/HeadView";
+import { HeadView } from "./components/wagmi/HeadView";
 
 // 1. 创建 Wagmi 客户端配置
 const config = getDefaultConfig({

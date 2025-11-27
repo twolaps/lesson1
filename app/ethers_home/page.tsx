@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState } from "react";
-import { EthersHeadView } from "../components/EthersHeadView";
-import { EthersInfoView } from "../components/EthersInfoView";
+import { EthersHeadView } from "../components/ethers/EthersHeadView";
+import { EthersInfoView } from "../components/ethers/EthersInfoView";
 
 export default function EthersHome() {
     enum ConnectStatus {

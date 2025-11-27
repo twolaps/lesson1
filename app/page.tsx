@@ -1,11 +1,11 @@
 'use client'
 
-import { ContractBalanceView } from "./components/ContractBalanceView";
-import { ContractTransactView } from "./components/ContractTransactView";
-import { InfoView } from "./components/InfoView";
-import { MintView } from "./components/MintView";
-import { TransactView } from "./components/TransactView";
-import { HeadView } from "./components/HeadView";
+import { ContractBalanceView } from "./components/wagmi/ContractBalanceView";
+import { ContractTransactView } from "./components/wagmi/ContractTransactView";
+import { InfoView } from "./components/wagmi/InfoView";
+import { MintView } from "./components/wagmi/MintView";
+import { TransactView } from "./components/wagmi/TransactView";
+import { HeadView } from "./components/wagmi/HeadView";
 
 import './globals.css';
 
