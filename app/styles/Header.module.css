@@ -1,0 +1,9 @@
+.connet_button {
+    display: flex;
+    justify-content: flex-end; /* 子元素整体靠右 */
+    margin: 1rem;
+}
+
+.header_link {
+    font-size: 2rem;
+}
