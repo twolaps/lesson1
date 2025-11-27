@@ -1,6 +1,6 @@
 
 import { Button, TextField} from "@mui/material";
-import styles from '../styles/view.module.css'
+import styles from '@/app/styles/view.module.css';
 import { useState } from "react";
 import { useAccount, useBalance, useSendTransaction, useWaitForTransactionReceipt } from "wagmi";
 import { isAddress, parseEther } from "viem";

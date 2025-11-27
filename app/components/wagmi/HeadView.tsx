@@ -1,5 +1,5 @@
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import styles from "@/app/styles/Header.module.css"
+import styles from "@/app/styles/header.module.css";
 import { Link } from "@mui/material";
 
 export const HeadView = ()=>{

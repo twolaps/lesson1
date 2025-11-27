@@ -1,6 +1,6 @@
 'use client';
 import { Button } from "@mui/material";
-import styles from '../styles/Header.module.css';
+import styles from '@/app/styles/header.module.css';
 interface EthersHeadViewProps {
     connectStatus: string;
     connectFunction: ()=>Promise<void>;
