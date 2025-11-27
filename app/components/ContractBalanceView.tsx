@@ -1,7 +1,7 @@
 import { useEffect } from "react";
-import { erc20Abi, formatUnits } from "viem";
-import { useAccount, useChainId, useReadContract } from "wagmi";
-import { eventBus, MINT_SUCCESS_EVENT, TRANSFER_SUCCESS_EVENT } from "../tools/EventBus";
+import { erc20Abi, formatUnits, Log } from "viem";
+import { useAccount, useChainId, useReadContract, useWatchContractEvent } from "wagmi";
+import { contractABI } from "../const/ContractConst";
 
 export const ContractBalanceView = ()=>{
     const contractAddress = '0x287b3e9E93f05D361A28985635ed7Db5163b8381';
@@ -25,27 +25,51 @@ export const ContractBalanceView = ()=>{
         chainId
     });
 
-    useEffect(()=>{
-        const onMintSuccess = ()=>{
-            console.log('收到铸币成功事件，重新获取我的余额');
+    useWatchContractEvent({
+        address: contractAddress,
+        abi: contractABI,
+        eventName: 'Transfer',
+        chainId,
+        onLogs: ()=>{
+            if (!userAddress) return;
+            refetchContract();
             refetchUser();
-        }
+        },
+    });
 
-        const onTransferSuccess = ()=>{
-            console.log('收到转账成功事件，重新获取合约余额');
+    useWatchContractEvent({
+        address: contractAddress,
+        abi: erc20Abi,
+        eventName: 'Transfer',
+        chainId,
+        onLogs: ()=>{
+            if (!userAddress) return;
             refetchContract();
             refetchUser();
         }
+    });
 
-        eventBus.on(MINT_SUCCESS_EVENT, onMintSuccess);
-        eventBus.on(TRANSFER_SUCCESS_EVENT, onTransferSuccess);
+    // useEffect(()=>{
+    //     const onMintSuccess = ()=>{
+    //         console.log('收到铸币成功事件，重新获取我的余额');
+    //         refetchUser();
+    //     }
 
-        return ()=>{
-            eventBus.off(MINT_SUCCESS_EVENT, onMintSuccess);
-            eventBus.off(TRANSFER_SUCCESS_EVENT, onTransferSuccess);
-        };
+    //     const onTransferSuccess = ()=>{
+    //         console.log('收到转账成功事件，重新获取合约余额');
+    //         refetchContract();
+    //         refetchUser();
+    //     }
 
-    }, [refetchUser, refetchContract]);
+    //     eventBus.on(MINT_SUCCESS_EVENT, onMintSuccess);
+    //     eventBus.on(TRANSFER_SUCCESS_EVENT, onTransferSuccess);
+
+    //     return ()=>{
+    //         eventBus.off(MINT_SUCCESS_EVENT, onMintSuccess);
+    //         eventBus.off(TRANSFER_SUCCESS_EVENT, onTransferSuccess);
+    //     };
+
+    // }, [refetchUser, refetchContract]);
 
     let userTxt: string = '';
     if (isLoading) {

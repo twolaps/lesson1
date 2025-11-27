@@ -15,7 +15,7 @@ const config = getDefaultConfig({
   ssr: true, // 如果你的应用使用了服务端渲染
   transports: {
     [mainnet.id]: http('https://eth.rpc.blxrbdn.com'),
-    [sepolia.id]: http('https://sepolia.drpc.org'),
+    [sepolia.id]: http('https://eth-sepolia.g.alchemy.com/v2/EI-sjwkwnRwHeb_D6_FsC'),
   },
 });
 

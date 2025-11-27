@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { useAccount, useChainId, useReadContract, useWaitForTransactionReceipt, useWriteContract } from "wagmi";
 import { erc20Abi, isAddress, parseEther } from "viem";
 import { contractAddress } from "../const/ContractConst";
-import { eventBus, TRANSFER_SUCCESS_EVENT } from "../tools/EventBus";
 
 export const ContractTransactView = () => {
 
@@ -31,7 +30,6 @@ export const ContractTransactView = () => {
     useEffect(()=>{
         if (isReceiptSuccess) {
             alert("转账成功！");
-            eventBus.emit(TRANSFER_SUCCESS_EVENT);
         }
         else if (isReceiptError) {
             alert("转账失败，原因：" + receiptError?.message);

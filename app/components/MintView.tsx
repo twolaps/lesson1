@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import { useWaitForTransactionReceipt, useWriteContract } from "wagmi";
 import { contractABI, contractAddress } from "../const/ContractConst";
 import styles from '../styles/view.module.css';
-import { eventBus, MINT_SUCCESS_EVENT } from "../tools/EventBus";
 
 export function MintView()  {
     const { writeContract, data } = useWriteContract();
@@ -20,7 +19,6 @@ export function MintView()  {
     useEffect(()=>{
         if (isReceiptSuccess) {
             alert("铸币成功！");
-            eventBus.emit(MINT_SUCCESS_EVENT);
         }
         else if (isReceiptError) {
             alert("铸币失败，原因：" + receiptError?.message);
