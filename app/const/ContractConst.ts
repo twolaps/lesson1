@@ -1,7 +1,6 @@
 import { Address, getAddress } from "viem";
 
 export const contractAddress: Address = getAddress('0x287b3e9E93f05D361A28985635ed7Db5163b8381');
-export const myAddress: `0x${string}` = '0x68f716d010196cffb31a3918f1bf606448e3fb88';
 export const contractABI: object[] = [
 						{
 							"inputs": [
