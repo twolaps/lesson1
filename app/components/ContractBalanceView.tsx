@@ -1,5 +1,4 @@
-import { useEffect } from "react";
-import { erc20Abi, formatUnits, Log } from "viem";
+import { erc20Abi, formatUnits } from "viem";
 import { useAccount, useChainId, useReadContract, useWatchContractEvent } from "wagmi";
 import { contractABI } from "../const/ContractConst";
 
@@ -48,28 +47,6 @@ export const ContractBalanceView = ()=>{
             refetchUser();
         }
     });
-
-    // useEffect(()=>{
-    //     const onMintSuccess = ()=>{
-    //         console.log('收到铸币成功事件，重新获取我的余额');
-    //         refetchUser();
-    //     }
-
-    //     const onTransferSuccess = ()=>{
-    //         console.log('收到转账成功事件，重新获取合约余额');
-    //         refetchContract();
-    //         refetchUser();
-    //     }
-
-    //     eventBus.on(MINT_SUCCESS_EVENT, onMintSuccess);
-    //     eventBus.on(TRANSFER_SUCCESS_EVENT, onTransferSuccess);
-
-    //     return ()=>{
-    //         eventBus.off(MINT_SUCCESS_EVENT, onMintSuccess);
-    //         eventBus.off(TRANSFER_SUCCESS_EVENT, onTransferSuccess);
-    //     };
-
-    // }, [refetchUser, refetchContract]);
 
     let userTxt: string = '';
     if (isLoading) {
