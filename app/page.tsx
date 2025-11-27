@@ -2,10 +2,11 @@
 
 import { ContractBalanceView } from "./components/ContractBalanceView";
 import { ContractTransactView } from "./components/ContractTransactView";
-import { HeadView } from "./components/HeadView";
 import { InfoView } from "./components/InfoView";
 import { MintView } from "./components/MintView";
 import { TransactView } from "./components/TransactView";
+import { HeadView } from "./components/HeadView";
+
 import './globals.css';
 
 export default function Home() {

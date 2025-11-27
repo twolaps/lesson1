@@ -7,6 +7,6 @@ body {
 }
 
 h1 {
-  font-family: 'Consolas';
+  font-family: 'consolas','Menlo', 'Monaco', 'Liberation Mono', 'Courier New', 'Microsoft YaHei', 'PingFang SC', 'PingFang TC','SimSun', 'STHeiti';
   font-size: 1.75rem;
 }

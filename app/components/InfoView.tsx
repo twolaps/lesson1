@@ -25,7 +25,7 @@ export const InfoView = ()=>{
     }
     else {
         balanceStr = balance ?? '0';
-    }   
+    }
 
 
 
