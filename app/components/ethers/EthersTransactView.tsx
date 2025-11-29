@@ -1,7 +1,10 @@
 import styles from '@/app/styles/view.module.css';
 import { ETHERS_TRANSACT_EVENT, eventBus } from '@/app/tool/EventBus';
 import { Button, TextField } from '@mui/material';
+import { TransactionResponse } from 'ethers';
+import { JsonRpcSigner } from 'ethers';
 import { parseEther } from 'ethers';
+import { BrowserProvider } from 'ethers';
 import { ethers, isAddress } from 'ethers';
 import { useState } from 'react';
 
@@ -10,6 +13,8 @@ interface EthersTransactViewProps {
 }
 
 export const EthersTransactView = ({ address }: EthersTransactViewProps)=> {
+    const provider: BrowserProvider = new BrowserProvider(window?.ethereum);
+    
     const [recipient, setRecipient] = useState('');
     const [amount, setAmount] = useState('');
     const [transactStatus, setTransactStatus] = useState('');
@@ -26,7 +31,6 @@ export const EthersTransactView = ({ address }: EthersTransactViewProps)=> {
 
     const onClickTransact = async ()=>{
         console.log(recipient, amount);
-        const provider: ethers.BrowserProvider = new ethers.BrowserProvider(window?.ethereum);
         const balance: bigint = await provider.getBalance(address);
         if (!isAddress(recipient)) {
             alert('请输入有效的以太坊地址');
@@ -51,9 +55,8 @@ export const EthersTransactView = ({ address }: EthersTransactViewProps)=> {
 
         console.log('发起转账:', {to: recipient, value: amountWei.toString()});
 
-        const signer:ethers.JsonRpcSigner = await provider.getSigner();
-
-        const tx: ethers.TransactionResponse =  await signer.sendTransaction({
+        const signer: JsonRpcSigner = await provider.getSigner();
+        const tx: TransactionResponse =  await signer.sendTransaction({
             to: recipient,
             value: amountWei,
         });

@@ -11,6 +11,9 @@ export const EthersInfoView = ({address}: EthersInfoViewProps)=> {
 
     useEffect(()=>{
         const getBalance = async () => {
+            if (typeof window === 'undefined' || !window.ethereum) {
+                return;
+            }
             const provider: BrowserProvider = new BrowserProvider(window.ethereum);
             const balance: bigint = await provider.getBalance(address);
             setBalance(balance);

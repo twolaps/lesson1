@@ -4,6 +4,8 @@ import { EthersHeadView } from "../components/ethers/EthersHeadView";
 import { EthersInfoView } from "../components/ethers/EthersInfoView";
 import { EthersTransactView } from "../components/ethers/EthersTransactView";
 import { EthersContractInfoView } from "../components/ethers/EthersContractInfoView";
+import { EthersMintView } from "../components/ethers/EthersMintView";
+import { EthersContractTransactView } from "../components/ethers/EthersContractTransactView";
 
 export default function EthersHome() {
     enum ConnectStatus {
@@ -21,6 +23,10 @@ export default function EthersHome() {
             return;
         }
 
+        if (typeof window === 'undefined' || !window.ethereum) {
+            return;
+        }
+
         if (window?.ethereum) {
             try {
                 const accounts: string[] = await window.ethereum.request({ method: 'eth_requestAccounts' });
@@ -35,6 +41,11 @@ export default function EthersHome() {
 
     useEffect(() => {
         const checkConnection = async () => {
+
+            if (typeof window === 'undefined' || !window.ethereum) {
+                return;
+            }
+            
             const accounts: string[] = await window.ethereum.request({ method: 'eth_accounts' });
             if (accounts.length > 0) {
                 setConnectStatus(ConnectStatus.Connected);
@@ -54,6 +65,9 @@ export default function EthersHome() {
             <hr/>
             <EthersContractInfoView address={address}/>
             <hr/>
+            <EthersMintView />
+            <hr/>
+            <EthersContractTransactView />
         </div>
     );
 }

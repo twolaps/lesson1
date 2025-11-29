@@ -1,4 +1,5 @@
 import { contractAddress } from "@/app/const/ContractConst";
+import { ETHERS_CONTRACT_TRANSACT_EVENT, ETHERS_MINT_EVENT, eventBus } from "@/app/tool/EventBus";
 import { Contract, formatUnits } from "ethers";
 import { BrowserProvider } from "ethers";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
@@ -14,6 +15,9 @@ export const EthersContractInfoView = ({ address }: EthersContractInfoViewProps)
 
     useEffect(()=>{
         const fetchBalance = async (title:string, checkAddress: string, setFunction:Dispatch<SetStateAction<string>>) => {
+            if (typeof window === 'undefined' || !window.ethereum) {
+                return;
+            }
             const provider: BrowserProvider = new BrowserProvider(window.ethereum);
             const contract:Contract = new Contract(contractAddress, erc20Abi, provider);
             try {
@@ -27,6 +31,22 @@ export const EthersContractInfoView = ({ address }: EthersContractInfoViewProps)
 
         fetchBalance("my_balance", address, setBalanceTxt);
         fetchBalance("contract_balance", contractAddress, setContractBalanceTxt);
+
+        const onMintSuccess = () => {
+            fetchBalance("my_balance", address, setBalanceTxt);
+        }
+
+        const onContractTransact = () => {
+            fetchBalance("my_balance", address, setBalanceTxt);
+            fetchBalance("contract_balance", contractAddress, setContractBalanceTxt);
+        }
+
+        eventBus.on(ETHERS_MINT_EVENT, onMintSuccess);
+        eventBus.on(ETHERS_CONTRACT_TRANSACT_EVENT, onContractTransact);
+        return ()=>{
+            eventBus.off(ETHERS_MINT_EVENT, onMintSuccess);
+            eventBus.off(ETHERS_CONTRACT_TRANSACT_EVENT, onContractTransact);
+        }
     }, [address]);
 
     return (
