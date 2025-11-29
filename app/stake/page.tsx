@@ -11,7 +11,7 @@ export default function StakePage() {
     const { address: myAddress } = useAccount();
 
 
-    const {data: stakedAmount, isLoading, error} = useReadContract({
+    const {data: stakedAmount} = useReadContract({
         address: stakeAddress,
         abi: stakeAbi,
         functionName: 'stakingBalance',
