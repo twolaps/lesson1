@@ -1,7 +1,10 @@
+'use client';
+import { HeadView } from "../components/HeadView";
+
 export default function WithdrawPage() {
     return (
         <div>
-            <h1>Withdraw Page</h1>
+            <HeadView/>
         </div>
     );
 }
