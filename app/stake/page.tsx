@@ -1,7 +1,7 @@
 'use client';
 import { Box, Divider, Typography } from "@mui/material";
 import { HeadView } from "../components/HeadView";
-import { useAccount, useContractRead, useReadContract } from "wagmi";
+import { useAccount, useReadContract } from "wagmi";
 import { stakeAddress } from "@/constants/address";
 import { stakeAbi } from "@/constants/abi/stakeABI";
 import { formatUnits } from "viem";
