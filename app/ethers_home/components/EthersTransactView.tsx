@@ -13,7 +13,6 @@ interface EthersTransactViewProps {
 }
 
 export const EthersTransactView = ({ address }: EthersTransactViewProps)=> {
-    const provider: BrowserProvider = new BrowserProvider(window?.ethereum);
     
     const [recipient, setRecipient] = useState('');
     const [amount, setAmount] = useState('');
@@ -31,6 +30,12 @@ export const EthersTransactView = ({ address }: EthersTransactViewProps)=> {
 
     const onClickTransact = async ()=>{
         console.log(recipient, amount);
+        if (typeof window === 'undefined' || !window.ethereum) {
+            alert('请先安装并登录 MetaMask 钱包');
+            return;
+        }
+        
+        const provider: BrowserProvider = new BrowserProvider(window?.ethereum);
         const balance: bigint = await provider.getBalance(address);
         if (!isAddress(recipient)) {
             alert('请输入有效的以太坊地址');
