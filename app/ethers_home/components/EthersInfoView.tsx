@@ -1,4 +1,4 @@
-import { ETHERS_TRANSACT_EVENT, eventBus } from "@/app/tool/EventBus";
+import { ETHERS_TRANSACT_EVENT, eventBus } from "@/tool/EventBus";
 import { BrowserProvider, formatEther } from "ethers";
 import { useEffect, useState } from "react";
 

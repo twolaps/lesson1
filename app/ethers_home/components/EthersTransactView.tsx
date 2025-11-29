@@ -1,5 +1,5 @@
-import styles from '@/app/styles/view.module.css';
-import { ETHERS_TRANSACT_EVENT, eventBus } from '@/app/tool/EventBus';
+import styles from '@/styles/view.module.css';
+import { ETHERS_TRANSACT_EVENT, eventBus } from '@/tool/EventBus';
 import { Button, TextField } from '@mui/material';
 import { TransactionResponse } from 'ethers';
 import { JsonRpcSigner } from 'ethers';

@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
-import styles from '@/app/styles/view.module.css';
+import styles from '@/styles/view.module.css';
 import { Button, TextField } from '@mui/material';
 import { BrowserProvider } from 'ethers';
 import { Contract } from 'ethers';
-import { contractABI, contractAddress } from '@/app/const/ContractConst';
 import { TransactionResponse } from 'ethers';
 import { Signer } from 'ethers';
-import { ETHERS_MINT_EVENT, eventBus } from '@/app/tool/EventBus';
+import { ETHERS_MINT_EVENT, eventBus } from '@/tool/EventBus';
+import { erc20Abi2 } from '@/constants/abi/erc20ABI';
+import { contractAddress } from '@/constants/address';
 
 export const EthersMintView = ()  => {
     const [amount, setAmount] = useState<number>(0);
@@ -34,7 +35,7 @@ export const EthersMintView = ()  => {
 
         const provider: BrowserProvider = new BrowserProvider(window.ethereum);
         const signer: Signer = await provider.getSigner();
-        const contract:Contract = new Contract(contractAddress, contractABI, signer);
+        const contract:Contract = new Contract(contractAddress, erc20Abi2, signer);
         try {
             const tx: TransactionResponse = await contract.mint(BigInt(amount * 1e18));
             setMintStatus('铸币已发送，等待确认...');

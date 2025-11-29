@@ -1,12 +1,13 @@
 import { useState } from "react";
-import styles from '@/app/styles/view.module.css'
+import styles from '@/styles/view.module.css'
 import { Button, TextField } from "@mui/material";
 import { BrowserProvider, isAddress, parseUnits } from "ethers";
 import { JsonRpcSigner } from "ethers";
 import { Contract } from "ethers";
-import { contractABI, contractAddress } from "@/app/const/ContractConst";
 import { TransactionResponse } from "ethers";
-import { ETHERS_CONTRACT_TRANSACT_EVENT, eventBus } from "@/app/tool/EventBus";
+import { ETHERS_CONTRACT_TRANSACT_EVENT, eventBus } from "@/tool/EventBus";
+import { erc20Abi2 } from "@/constants/abi/erc20ABI";
+import { contractAddress } from "@/constants/address";
 
 export const EthersContractTransactView = ()=>{
     // 状态管理：接收方地址和转账金额
@@ -29,7 +30,7 @@ export const EthersContractTransactView = ()=>{
 
         const provider: BrowserProvider = new BrowserProvider(window?.ethereum);
         const signer:JsonRpcSigner = await provider.getSigner();
-        const contract: Contract = new Contract(contractAddress, contractABI, signer);
+        const contract: Contract = new Contract(contractAddress, erc20Abi2, signer);
         try {
             const tx: TransactionResponse = await contract.transfer(recipient, parseUnits(amount, 18));
             setTransactStatus('转账已发送，等待确认...');

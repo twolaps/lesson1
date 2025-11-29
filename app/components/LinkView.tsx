@@ -1,5 +1,5 @@
 import { Link } from "@mui/material"
-import styles from "@/app/styles/header.module.css";
+import styles from '@/styles/header.module.css';
 
 export const LinkView = ()=>{
     return (

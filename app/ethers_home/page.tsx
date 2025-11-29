@@ -1,11 +1,11 @@
 'use client';
 import { useEffect, useState } from "react";
-import { EthersHeadView } from "../components/ethers/EthersHeadView";
-import { EthersInfoView } from "../components/ethers/EthersInfoView";
-import { EthersTransactView } from "../components/ethers/EthersTransactView";
-import { EthersContractInfoView } from "../components/ethers/EthersContractInfoView";
-import { EthersMintView } from "../components/ethers/EthersMintView";
-import { EthersContractTransactView } from "../components/ethers/EthersContractTransactView";
+import { EthersHeadView } from "./components/EthersHeadView";
+import { EthersInfoView } from "./components/EthersInfoView";
+import { EthersTransactView } from "./components/EthersTransactView";
+import { EthersContractInfoView } from "./components/EthersContractInfoView";
+import { EthersMintView } from "./components/EthersMintView";
+import { EthersContractTransactView } from "./components/EthersContractTransactView";
 
 export default function EthersHome() {
     enum ConnectStatus {

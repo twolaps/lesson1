@@ -1,8 +1,9 @@
 import { Button, TextField } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useWaitForTransactionReceipt, useWriteContract } from "wagmi";
-import { contractABI, contractAddress } from "../../const/ContractConst";
-import styles from '@/app/styles/view.module.css';
+import styles from '@/styles/view.module.css';
+import { erc20Abi2 } from "../../constants/abi/erc20ABI";
+import { contractAddress } from "@/constants/address";
 
 export function MintView()  {
     const { writeContract, data } = useWriteContract();
@@ -42,7 +43,7 @@ export function MintView()  {
 
         writeContract({
             address: contractAddress,
-            abi: contractABI,
+            abi: erc20Abi2,
             functionName: 'mint',
             args: [BigInt(amount * 1e18)],
         });

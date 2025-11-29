@@ -1,5 +1,5 @@
-import { contractAddress } from "@/app/const/ContractConst";
-import { ETHERS_CONTRACT_TRANSACT_EVENT, ETHERS_MINT_EVENT, eventBus } from "@/app/tool/EventBus";
+import { contractAddress } from "@/constants/address";
+import { ETHERS_CONTRACT_TRANSACT_EVENT, ETHERS_MINT_EVENT, eventBus } from "@/tool/EventBus";
 import { Contract, formatUnits } from "ethers";
 import { BrowserProvider } from "ethers";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
