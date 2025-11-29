@@ -2,6 +2,8 @@
 import { useEffect, useState } from "react";
 import { EthersHeadView } from "../components/ethers/EthersHeadView";
 import { EthersInfoView } from "../components/ethers/EthersInfoView";
+import { EthersTransactView } from "../components/ethers/EthersTransactView";
+import { EthersContractInfoView } from "../components/ethers/EthersContractInfoView";
 
 export default function EthersHome() {
     enum ConnectStatus {
@@ -42,12 +44,15 @@ export default function EthersHome() {
         checkConnection();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
-
     return (
         <div>
             <EthersHeadView connectStatus={connectStatus} connectFunction={connectWallet}/>
             <hr/>
             <EthersInfoView address={address}/>
+            <hr/>
+            <EthersTransactView address={address}/>
+            <hr/>
+            <EthersContractInfoView address={address}/>
             <hr/>
         </div>
     );

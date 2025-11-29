@@ -4,6 +4,11 @@
     margin: 1rem;
 }
 
+.link_view {
+    display: flex;
+    justify-content: flex-end; /* 子元素整体靠右 */
+}
+
 .header_link {
     font-size: 2rem;
 }

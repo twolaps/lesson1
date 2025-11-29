@@ -1,6 +1,7 @@
 'use client';
 import { Button } from "@mui/material";
 import styles from '@/app/styles/header.module.css';
+import { LinkView } from "../LinkView";
 interface EthersHeadViewProps {
     connectStatus: string;
     connectFunction: ()=>Promise<void>;
@@ -14,6 +15,7 @@ export const EthersHeadView = ({connectStatus, connectFunction}: EthersHeadViewP
 
     return (
         <div className={styles.connet_button}>
+            <LinkView/>
             <Button variant="contained" onClick={onClickConnect}>{connectStatus}</Button>
         </div>
     );

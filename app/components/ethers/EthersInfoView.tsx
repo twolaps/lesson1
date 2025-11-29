@@ -1,3 +1,4 @@
+import { ETHERS_TRANSACT_EVENT, eventBus } from "@/app/tool/EventBus";
 import { BrowserProvider, formatEther } from "ethers";
 import { useEffect, useState } from "react";
 
@@ -18,8 +19,15 @@ export const EthersInfoView = ({address}: EthersInfoViewProps)=> {
         if (address && address.length > 0) {
             getBalance();
         }
+
+
+        eventBus.on(ETHERS_TRANSACT_EVENT, getBalance);
+
+        return ()=>{
+            eventBus.off(ETHERS_TRANSACT_EVENT, getBalance);
+        }
     }, [address]);
-    
+
     return (
         <div>
             <h1>my_address: {address}</h1>
