@@ -1,4 +1,4 @@
-import { Box, Typography } from "@mui/material";
+import { Box, colors, Typography } from "@mui/material";
 interface RectBoxViewProps {
     title: string;
     value: string;
@@ -16,8 +16,8 @@ export default function RectBoxView({ title, value }: RectBoxViewProps) {
                 p: 2, // 内边距
             }}
         >
-            <Typography sx={{fontSize: '0.93rem', mt: 0.5}} align="center">{title}</Typography>
-            <Typography variant="h6" align="center">{value} ETH</Typography>
+            <Typography sx={{fontSize: '0.93rem', color: '#8b8b8b', mt: 0.5}} align="center">{title}</Typography>
+            <Typography sx={{fontSize: '1.5rem', color: '#0285c7', fontWeight: 750}} variant="h6" align="center">{value} ETH</Typography>
         </Box>
     )
 }

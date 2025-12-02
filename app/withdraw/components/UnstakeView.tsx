@@ -1,6 +1,10 @@
+import { stakeAbi } from "@/constants/abi/stakeABI";
+import { stakeAddress } from "@/constants/address";
+import { ETHERS_UNSTAKE_SUCCESS_EVENT, eventBus } from "@/tool/EventBus";
 import { Button, InputAdornment, TextField, Typography } from "@mui/material"
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { parseEther } from "viem";
+import { useWaitForTransactionReceipt, useWriteContract } from "wagmi";
 
 interface UnstakeViewProps {
     stakedAmount?: bigint | unknown;
@@ -8,12 +12,20 @@ interface UnstakeViewProps {
 
 export default function UnstakeView({stakedAmount}: UnstakeViewProps) {
     const [amount, setAmount] = useState<string>('0');
+    const {writeContractAsync} = useWriteContract();
+    const [tx, setTxHash] = useState<`0x${string}` | undefined>(undefined);
+    const { 
+            isSuccess: isReceiptSuccess, 
+            isError: isReceiptError, 
+            error: receiptError 
+        } = useWaitForTransactionReceipt({ hash: tx, query: { enabled: !!tx } });
 
     const onChangeAmount = (event: React.ChangeEvent<HTMLInputElement>) => {
         console.log(event.target.value);
+        setAmount(String(event.target.value));
     }
 
-    const onClickUnstake = () => {
+    const onClickUnstake = async () => {
         console.log('点击了 Unstake 按钮');
 
         if (!stakedAmount || stakedAmount === BigInt(0)) {
@@ -36,10 +48,31 @@ export default function UnstakeView({stakedAmount}: UnstakeViewProps) {
 
         // 这里可以添加解除质押的逻辑
 
+        try {
+            const tx = await writeContractAsync({
+                address: stakeAddress,
+                abi: stakeAbi,
+                functionName: 'unstake',
+                args: [BigInt(0), parsedAmount]
+            });
+            setTxHash(tx);
+            alert("解除质押已提交，请等待链上确认");
+        } catch (error) {
+            alert("提交解除质押交易时出错: " + (error as Error).message);
+        }
     }
+
+    useEffect(() => {
+        if (isReceiptSuccess) {
+            alert("解除质押交易已确认");
+            eventBus.emit(ETHERS_UNSTAKE_SUCCESS_EVENT);
+        } else if (isReceiptError) {
+            alert("解除质押交易失败: " + (receiptError as Error).message);
+        }
+    }, [isReceiptSuccess, isReceiptError, receiptError]);
     
     return (
-        <div style={{ marginTop: 20 }}>
+        <div style={{ marginTop: 50 }}>
             <Typography variant="h5">Unstake</Typography>
             <TextField 
                 type="number" 

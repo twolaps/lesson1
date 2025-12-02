@@ -9,6 +9,9 @@ import { stakeAddress } from "@/constants/address";
 import { stakeAbi } from "@/constants/abi/stakeABI";
 import { formatUnits } from "viem";
 import UnstakeView from "./components/UnstakeView";
+import { useEffect } from "react";
+import { ETHERS_UNSTAKE_SUCCESS_EVENT, eventBus } from "@/tool/EventBus";
+import WithdrawView from "./components/WithdrawView";
 
 export default function WithdrawPage() {
     const { address: myAddress } = useAccount();
@@ -22,9 +25,9 @@ export default function WithdrawPage() {
     });
     
 
-    let stakeAmountStr: string = '0.0000';
+    let stakedAmountStr: string = '0.0000';
     if (stakedAmount) {
-        stakeAmountStr = parseFloat(formatUnits(stakedAmount as bigint, 18)).toFixed(4)
+        stakedAmountStr = parseFloat(formatUnits(stakedAmount as bigint, 18)).toFixed(4)
     }
 
     const { data: withdrawAmount, refetch: refetchWithdrawAmount } = useReadContract({
@@ -36,10 +39,23 @@ export default function WithdrawPage() {
     });
 
     const withdrawAmountData: bigint[] = withdrawAmount as [bigint, bigint];
+    console.log(withdrawAmountData);
     const requestAmount: bigint = withdrawAmount ? BigInt(withdrawAmountData[0]) : BigInt(0);
-    const pendingLockedAmount: bigint = withdrawAmount ? BigInt(withdrawAmountData[1]) : BigInt(0);
-    const availableToWithdrawStr: string = parseFloat(formatUnits(requestAmount - pendingLockedAmount, 18)).toFixed(4);
-    const pendingWithdrawStr: string = parseFloat(formatUnits(pendingLockedAmount, 18)).toFixed(4);
+    const pendingWithdrawAmount: bigint = withdrawAmount ? BigInt(withdrawAmountData[1]) : BigInt(0);
+    const availableToWithdrawStr: string = parseFloat(formatUnits(pendingWithdrawAmount, 18)).toFixed(4);
+    const pendingWithdrawStr: string = parseFloat(formatUnits(requestAmount - pendingWithdrawAmount, 18)).toFixed(4);
+
+    useEffect(() => {
+        const handleUnstakeSuccess = () => {
+            console.log("收到解除质押成功事件，刷新数据");
+            refetchStakedAmount();
+            refetchWithdrawAmount();
+        };
+        eventBus.on(ETHERS_UNSTAKE_SUCCESS_EVENT, handleUnstakeSuccess);
+        return () => {
+            eventBus.off(ETHERS_UNSTAKE_SUCCESS_EVENT, handleUnstakeSuccess);
+        }
+    }, [refetchStakedAmount, refetchWithdrawAmount]);
     
     return (
         <div>
@@ -63,7 +79,7 @@ export default function WithdrawPage() {
 
                     <Grid container spacing={4}>
                         <Grid size={4}>
-                            <StakeAmountView amount={stakeAmountStr}/>
+                            <StakeAmountView amount={stakedAmountStr}/>
                         </Grid>
                         <Grid size={4}>
                             <AvailableWithdrawView amount={availableToWithdrawStr}/>
@@ -74,6 +90,7 @@ export default function WithdrawPage() {
                     </Grid>
                     
                     <UnstakeView stakedAmount={stakedAmount}/>
+                    <WithdrawView amount={""}/>
                 </Box>
             </Box>
 

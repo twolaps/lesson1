@@ -13,6 +13,7 @@ export default function ClaimedRewardView({ stakeAddress, stakeAbi, myAddress }:
     const { writeContractAsync } = useWriteContract();
     const [txHash, setTxHash] = useState<`0x${string}` | undefined>(undefined);
     const [rewardStatus, setRewardStatus] = useState<string>('');
+    const [btnEnabled, setBtnEnabled] = useState<boolean>(true);
 
     const { isSuccess, isError, error } = useWaitForTransactionReceipt({
         hash: txHash,
@@ -60,16 +61,15 @@ export default function ClaimedRewardView({ stakeAddress, stakeAbi, myAddress }:
         claimedRewardStr = parseFloat(formatUnits(pendingReward, 18)).toFixed(4);
     }
 
-    let btnEnabled: boolean = true;
+    let hasReward: boolean = true;
     if (pendingReward && typeof pendingReward === 'bigint' && pendingReward > BigInt(0)) {
-        btnEnabled = true;
+        hasReward = true;
     }
     else {
-        btnEnabled = false;
+        hasReward = false;
     }
 
     const symbolStr: string = tokenSymbol ? String(tokenSymbol) : '';
-
 
     useEffect(() => {
         if (isSuccess) {
@@ -78,10 +78,12 @@ export default function ClaimedRewardView({ stakeAddress, stakeAbi, myAddress }:
             setRewardStatus("质押奖励领取成功");
             setTxHash(undefined);
             refetchBalance();
+            setBtnEnabled(true);
         } else if (isError) {
             alert("质押奖励领取失败: " + (error as Error).message);
             setRewardStatus("");
             setTxHash(undefined);
+            setBtnEnabled(true);
         }
     }, [isSuccess, isError, error, refetchPendingReward, refetchBalance]);
 
@@ -98,6 +100,7 @@ export default function ClaimedRewardView({ stakeAddress, stakeAbi, myAddress }:
 
         try {
             setRewardStatus("正在领取质押奖励...");
+            setBtnEnabled(false);
             const tx: `0x${string}` = await writeContractAsync({
                 address: stakeAddress,
                 abi: stakeAbi,
@@ -108,6 +111,7 @@ export default function ClaimedRewardView({ stakeAddress, stakeAbi, myAddress }:
         } catch (error) {
             setRewardStatus("领取质押奖励时出错");
             alert("领取质押奖励时出错: " + (error as Error).message);
+            setBtnEnabled(true);
             return;
         }
     }
@@ -117,7 +121,7 @@ export default function ClaimedRewardView({ stakeAddress, stakeAbi, myAddress }:
             <Typography sx={{mt: 15}} variant="h5" align="center">Claimed Rewards</Typography>
             <Typography variant="h2" align="center">{claimedRewardStr} {symbolStr}</Typography>
             <Typography sx={{mt: 4}} variant="h5" align="center">Your Balance: {balanceStr} {symbolStr}</Typography>
-            <Button onClick={onClickClaimReward} variant="contained" disabled={!btnEnabled} sx={{mt: 4, display: 'block', mx: 'auto',width:300, height:60, fontSize:24}}>Claim Rewards</Button>
+            <Button onClick={onClickClaimReward} variant="contained" disabled={!btnEnabled || !hasReward} sx={{mt: 4, display: 'block', mx: 'auto',width:300, height:60, fontSize:24}}>Claim Rewards</Button>
             <Typography sx={{mt: 4}} variant="h5" align="center">{rewardStatus}</Typography>
         </>
     );

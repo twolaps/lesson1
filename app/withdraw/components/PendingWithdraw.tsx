@@ -1,11 +1,10 @@
 import RectBoxView from "./RectBoxView";
 
-interface WithdrawViewProps {
+interface PendingWithdrawProps {
     amount?: string;
 }
 
-export default function WithdrawView({ amount }: WithdrawViewProps) {
-
+export default function PendingWithdraw({ amount }: PendingWithdrawProps) {
     return (
         <RectBoxView title="Pending Withdraw" value={amount || "0.0000"} />
     );  
