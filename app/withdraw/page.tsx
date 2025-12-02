@@ -1,13 +1,53 @@
 'use client';
-import { Box, Divider, Typography } from "@mui/material";
+import { Box, Divider, Grid, Typography } from "@mui/material";
 import { HeadView } from "../components/HeadView";
+import StakeAmountView from "./components/StakeAmountView";
+import AvailableWithdrawView from "./components/AvailableWithdrawView";
+import PendingWithdraw from "./components/PendingWithdraw";
+import { useAccount, useReadContract } from "wagmi";
+import { stakeAddress } from "@/constants/address";
+import { stakeAbi } from "@/constants/abi/stakeABI";
+import { formatUnits } from "viem";
+import UnstakeView from "./components/UnstakeView";
 
 export default function WithdrawPage() {
+    const { address: myAddress } = useAccount();
+
+    const {data: stakedAmount, refetch: refetchStakedAmount} = useReadContract({
+        address: stakeAddress,
+        abi: stakeAbi,
+        functionName: 'stakingBalance',
+        args: [BigInt(0), myAddress!],
+        query: { enabled: !!myAddress }
+    });
+    
+
+    let stakeAmountStr: string = '0.0000';
+    if (stakedAmount) {
+        stakeAmountStr = parseFloat(formatUnits(stakedAmount as bigint, 18)).toFixed(4)
+    }
+
+    const { data: withdrawAmount, refetch: refetchWithdrawAmount } = useReadContract({
+        address: stakeAddress,
+        abi: stakeAbi,
+        functionName: 'withdrawAmount',
+        args: [0, myAddress!], // 0为池子ID
+        query: { enabled: !!myAddress }
+    });
+
+    const withdrawAmountData: bigint[] = withdrawAmount as [bigint, bigint];
+    const requestAmount: bigint = withdrawAmount ? BigInt(withdrawAmountData[0]) : BigInt(0);
+    const pendingLockedAmount: bigint = withdrawAmount ? BigInt(withdrawAmountData[1]) : BigInt(0);
+    const availableToWithdrawStr: string = parseFloat(formatUnits(requestAmount - pendingLockedAmount, 18)).toFixed(4);
+    const pendingWithdrawStr: string = parseFloat(formatUnits(pendingLockedAmount, 18)).toFixed(4);
+    
     return (
         <div>
             <HeadView/>
             <Divider sx={{my: 3}}/>
-            <Box display="flex" justifyContent="center" mt={4}>
+            <Typography variant="h2" align="center">Withdraw</Typography>
+            <Typography variant="h5" align="center">Unstake and withdraw your ETH</Typography>
+            <Box width="100%" display="flex" justifyContent="center" mt={4}>
                 <Box
                         sx={{
                             width: 656, // 宽度
@@ -19,12 +59,26 @@ export default function WithdrawPage() {
                             p: 2, // 内边距
                         }}
                     >
-                        <Typography variant="h2" align="center">Withdraw</Typography>
-                        <Typography variant="h5" align="center">Unstake and withdraw your ETH</Typography>
 
-                        
-                </Box>    
+
+                    <Grid container spacing={4}>
+                        <Grid size={4}>
+                            <StakeAmountView amount={stakeAmountStr}/>
+                        </Grid>
+                        <Grid size={4}>
+                            <AvailableWithdrawView amount={availableToWithdrawStr}/>
+                        </Grid>
+                        <Grid size={4}>
+                            <PendingWithdraw amount={pendingWithdrawStr}/>
+                        </Grid>
+                    </Grid>
+                    
+                    <UnstakeView stakedAmount={stakedAmount}/>
+                </Box>
             </Box>
+
+                
+            
 
             
             
