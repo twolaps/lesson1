@@ -1,4 +1,4 @@
-export const stakeAbi = [
+export const stakeAbi:object[] = [
   {
     "inputs": [],
     "name": "AccessControlBadConfirmation",

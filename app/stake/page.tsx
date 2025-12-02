@@ -1,11 +1,13 @@
 'use client';
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, TextField, Typography } from "@mui/material";
+import { Box, Button, Divider, TextField, Typography } from "@mui/material";
 import { HeadView } from "../components/HeadView";
 import { useAccount, useBalance, useReadContract, useWaitForTransactionReceipt, useWriteContract } from "wagmi";
 import { stakeAddress } from "@/constants/address";
 import { stakeAbi } from "@/constants/abi/stakeABI";
 import { formatUnits, parseEther } from "viem";
 import { useEffect, useState } from "react";
+import ConfirmDialog from "../components/common/ConfirmDialog";
+import ClaimedRewardView from "./components/ClaimedRewardView";
 
 export default function StakePage() {
     const { address: myAddress } = useAccount();
@@ -122,6 +124,11 @@ export default function StakePage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isReceiptSuccess, isReceiptError, receiptError]);
 
+    let stakeAmountStr: string = '0.0000';
+    if (stakedAmount) {
+        stakeAmountStr = parseFloat(formatUnits(stakedAmount as bigint, 18)).toFixed(4)
+    }
+
     return (
         <div>
             <HeadView/>
@@ -130,29 +137,19 @@ export default function StakePage() {
             <Typography variant="h5" align="center">Stake ETH to earn tokens</Typography>
             <Box height={60} />
             <Typography variant="h5" align="center">Staked Amount</Typography>
-            <Typography variant="h2" align="center">{stakedAmount ? Number(formatUnits(stakedAmount, 18)).toFixed(4) : "0.0000"} ETH</Typography>
+            <Typography variant="h2" align="center">{stakeAmountStr} ETH</Typography>
             <Box display="flex" justifyContent="center" mt={4}>
                 <TextField disabled={!btnEnabled} placeholder="0.00" slotProps={{htmlInput: {step: "0.01",min: "0"}}} value={amount} onChange={onChangeAmount} type="number" label="Amount to Stake (ETH)" variant="outlined" sx={{mt: 4, minWidth:500}} />
                 <Typography variant="h5" align="center" sx={{mt: 5, ml:2}}>ETH</Typography>
             </Box>
             <Typography variant="h5" align="center" sx={{mt: 5, ml:2}}>available: {balanceStr} ETH</Typography>
-
             <Button onClick={onClickStake} variant="contained" color="primary" disabled={!btnEnabled} sx={{mt: 4, display: 'block', mx: 'auto',width:300, height:60, fontSize:24}}>
                 Stake Now
             </Button>
-
             <Typography variant="h5" align="center" sx={{mt: 5, ml:2}}>{stakeStatus}</Typography>
-
-
-            <Dialog open={dialogOpen} onClose={onClickCancelStake}>
-                <DialogTitle>提示</DialogTitle>
-                <DialogContent>你确定要执行此操作吗？</DialogContent>
-                <DialogActions>
-                    <Button onClick={onClickCancelStake}>取消</Button>
-                    <Button onClick={onClickConfirmStake} autoFocus color="primary">确定</Button>
-                </DialogActions>
-            </Dialog>
+            <ClaimedRewardView stakeAddress={stakeAddress} stakeAbi={stakeAbi} myAddress={myAddress} />
             
+            <ConfirmDialog isOpen={dialogOpen} title="提示" content="你确定要执行此操作吗？" onConfirm={onClickConfirmStake} onCancel={onClickCancelStake} />
         </div>
     );
 }
