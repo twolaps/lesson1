@@ -28,7 +28,7 @@ export default function StakePage() {
     
     let balanceStr: string = '';
     if (isLoading) {
-        balanceStr = 'Loading...';
+        balanceStr = '0.0000';
     }
     else if (isError) {
         balanceStr = '0.0000';
