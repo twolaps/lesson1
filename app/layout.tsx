@@ -6,6 +6,7 @@ import { getDefaultConfig, RainbowKitProvider } from '@rainbow-me/rainbowkit';
 import { http, WagmiProvider } from 'wagmi';
 import { mainnet, sepolia } from 'wagmi/chains';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'; // 注意导入来源
+import { createTheme, ThemeProvider } from "@mui/material";
 
 // 1. 创建 Wagmi 客户端配置
 const config = getDefaultConfig({
@@ -22,17 +23,25 @@ const config = getDefaultConfig({
 // 2. 初始化 React Query 的客户端
 const queryClient = new QueryClient();
 
+const darkTheme = createTheme({
+  palette: {
+    mode: 'dark',
+  }
+});
+
 export default function RootLayout({children}: Readonly<{children: React.ReactNode}>) {
   return (
     <html lang="en">
       <body>
-        <WagmiProvider config={config}>
-          <QueryClientProvider client={queryClient}>
-            <RainbowKitProvider>
-              {children}
-            </RainbowKitProvider>
-          </QueryClientProvider>
-        </WagmiProvider>
+        <ThemeProvider theme={darkTheme}>
+          <WagmiProvider config={config}>
+            <QueryClientProvider client={queryClient}>
+              <RainbowKitProvider>
+                  {children}
+              </RainbowKitProvider>
+            </QueryClientProvider>
+          </WagmiProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

@@ -3,13 +3,13 @@ import { useEffect, useState } from "react";
 import { erc20Abi, formatUnits } from "viem";
 import { useChainId, useReadContract, useWaitForTransactionReceipt, useWriteContract } from "wagmi";
 
-interface ClaimedRewardViewProps {
+interface PendingRewardViewProps {
     stakeAddress: `0x${string}`;
     stakeAbi: object[];
     myAddress: `0x${string}` | undefined;
 }
 
-export default function ClaimedRewardView({ stakeAddress, stakeAbi, myAddress }: ClaimedRewardViewProps) {
+export default function PendingRewardView({ stakeAddress, stakeAbi, myAddress }: PendingRewardViewProps) {
     const { writeContractAsync } = useWriteContract();
     const [txHash, setTxHash] = useState<`0x${string}` | undefined>(undefined);
     const [rewardStatus, setRewardStatus] = useState<string>('');
@@ -20,6 +20,7 @@ export default function ClaimedRewardView({ stakeAddress, stakeAbi, myAddress }:
         query: { enabled: !!txHash }
     });
 
+    // 获取用户待领取的质押奖励
     const { data: pendingReward, refetch: refetchPendingReward } = useReadContract({
         address: stakeAddress,
         abi: stakeAbi,
@@ -28,6 +29,7 @@ export default function ClaimedRewardView({ stakeAddress, stakeAbi, myAddress }:
         query: { enabled: !!myAddress }
     });
 
+    // 获取质押代币地址
     const { data: tokenAddress } = useReadContract({
         address: stakeAddress,
         abi: stakeAbi,
@@ -37,6 +39,8 @@ export default function ClaimedRewardView({ stakeAddress, stakeAbi, myAddress }:
     const realTokenAddress: `0x${string}` | undefined = typeof tokenAddress === 'string' ? tokenAddress as `0x${string}` : undefined;
 
     const chainId: number = useChainId();
+
+    // 获取用户代币余额
     const { data: balanceData, refetch: refetchBalance } = useReadContract({
         address: realTokenAddress,
         abi: erc20Abi,
@@ -48,6 +52,7 @@ export default function ClaimedRewardView({ stakeAddress, stakeAbi, myAddress }:
 
     const balanceStr: string = balanceData ? parseFloat(formatUnits(balanceData as bigint, 18)).toFixed(4) : '0.0000';
 
+    // 获取代币符号
     const { data: tokenSymbol } = useReadContract({
         address: realTokenAddress,
         abi: erc20Abi,
@@ -55,11 +60,12 @@ export default function ClaimedRewardView({ stakeAddress, stakeAbi, myAddress }:
         query: { enabled: !!realTokenAddress }
     });
 
-    let claimedRewardStr: string = '0.0000';
+    let pendingRewardStr: string = '0.0000';
     if (typeof pendingReward === 'bigint'){
         formatUnits(pendingReward, 18);
-        claimedRewardStr = parseFloat(formatUnits(pendingReward, 18)).toFixed(4);
+        pendingRewardStr = parseFloat(formatUnits(pendingReward, 18)).toFixed(4);
     }
+
 
     let hasReward: boolean = true;
     if (pendingReward && typeof pendingReward === 'bigint' && pendingReward > BigInt(0)) {
@@ -71,6 +77,7 @@ export default function ClaimedRewardView({ stakeAddress, stakeAbi, myAddress }:
 
     const symbolStr: string = tokenSymbol ? String(tokenSymbol) : '';
 
+    // 刷新交易结果
     useEffect(() => {
         if (isSuccess) {
             refetchPendingReward();
@@ -87,6 +94,16 @@ export default function ClaimedRewardView({ stakeAddress, stakeAbi, myAddress }:
         }
     }, [isSuccess, isError, error, refetchPendingReward, refetchBalance]);
 
+
+    // 轮询刷新Pending Rewards
+    useEffect(() => {
+        const timer = setInterval(() => {
+            refetchPendingReward();
+        }, 10000); // 每10秒刷新一次待领取奖励
+        return () => clearInterval(timer);
+    }, [refetchPendingReward]);
+
+    // 领取质押奖励
     const onClickClaimReward = async ()=> {
         if (!myAddress) {
             alert("请先连接钱包");
@@ -118,8 +135,8 @@ export default function ClaimedRewardView({ stakeAddress, stakeAbi, myAddress }:
 
     return (
         <>
-            <Typography sx={{mt: 15}} variant="h5" align="center">Claimed Rewards</Typography>
-            <Typography variant="h2" align="center">{claimedRewardStr} {symbolStr}</Typography>
+            <Typography sx={{mt: 15}} variant="h5" align="center">Pending Rewards</Typography>
+            <Typography variant="h2" align="center">{pendingRewardStr} {symbolStr}</Typography>
             <Typography sx={{mt: 4}} variant="h5" align="center">Your Balance: {balanceStr} {symbolStr}</Typography>
             <Button onClick={onClickClaimReward} variant="contained" disabled={!btnEnabled || !hasReward} sx={{mt: 4, display: 'block', mx: 'auto',width:300, height:60, fontSize:24}}>Claim Rewards</Button>
             <Typography sx={{mt: 4}} variant="h5" align="center">{rewardStatus}</Typography>

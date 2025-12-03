@@ -7,7 +7,7 @@ import { stakeAbi } from "@/constants/abi/stakeABI";
 import { formatUnits, parseEther } from "viem";
 import { useEffect, useState } from "react";
 import ConfirmDialog from "../components/common/ConfirmDialog";
-import ClaimedRewardView from "./components/ClaimedRewardView";
+import PendingRewardView from "./components/PendingRewardView";
 
 export default function StakePage() {
     const { address: myAddress } = useAccount();
@@ -147,7 +147,7 @@ export default function StakePage() {
                 Stake Now
             </Button>
             <Typography variant="h5" align="center" sx={{mt: 5, ml:2}}>{stakeStatus}</Typography>
-            <ClaimedRewardView stakeAddress={stakeAddress} stakeAbi={stakeAbi} myAddress={myAddress} />
+            <PendingRewardView stakeAddress={stakeAddress} stakeAbi={stakeAbi} myAddress={myAddress} />
             
             <ConfirmDialog isOpen={dialogOpen} title="提示" content="你确定要执行此操作吗？" onConfirm={onClickConfirmStake} onCancel={onClickCancelStake} />
         </div>
