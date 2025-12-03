@@ -12,6 +12,7 @@ interface UnstakeViewProps {
 
 export default function UnstakeView({stakedAmount}: UnstakeViewProps) {
     const [amount, setAmount] = useState<string>('0');
+    const [btnEnabled, setBtnEnabled] = useState<boolean>(true);
     const {writeContractAsync} = useWriteContract();
     const [tx, setTxHash] = useState<`0x${string}` | undefined>(undefined);
     const { 
@@ -49,6 +50,7 @@ export default function UnstakeView({stakedAmount}: UnstakeViewProps) {
         // 这里可以添加解除质押的逻辑
 
         try {
+            setBtnEnabled(false);
             const tx = await writeContractAsync({
                 address: stakeAddress,
                 abi: stakeAbi,
@@ -58,18 +60,22 @@ export default function UnstakeView({stakedAmount}: UnstakeViewProps) {
             setTxHash(tx);
             alert("解除质押已提交，请等待链上确认");
         } catch (error) {
+            setBtnEnabled(true);
             alert("提交解除质押交易时出错: " + (error as Error).message);
         }
     }
 
     useEffect(() => {
         if (isReceiptSuccess) {
+            setBtnEnabled(true);
             alert("解除质押交易已确认");
             eventBus.emit(ETHERS_UNSTAKE_SUCCESS_EVENT);
         } else if (isReceiptError) {
+            setBtnEnabled(true);
             alert("解除质押交易失败: " + (receiptError as Error).message);
         }
-    }, [isReceiptSuccess, isReceiptError, receiptError]);
+    //eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isReceiptSuccess, isReceiptError]);
     
     return (
         <div style={{ marginTop: 50 }}>
@@ -87,7 +93,7 @@ export default function UnstakeView({stakedAmount}: UnstakeViewProps) {
                         endAdornment: <InputAdornment position="end">ETH</InputAdornment>,
                     }
                 }} />
-            <Button onClick={onClickUnstake} style={{margin: '1rem 1rem', height:'50px', width: '578px', fontSize: '20px'}} variant="contained" >
+            <Button disabled={!btnEnabled} onClick={onClickUnstake} style={{margin: '1rem 1rem', height:'50px', width: '578px', fontSize: '20px'}} variant="contained" >
                 Unstake ETH
             </Button>
         </div>

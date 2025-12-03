@@ -90,7 +90,7 @@ export default function WithdrawPage() {
                     </Grid>
                     
                     <UnstakeView stakedAmount={stakedAmount}/>
-                    <WithdrawView amount={""}/>
+                    <WithdrawView amount={availableToWithdrawStr}/>
                 </Box>
             </Box>
 
