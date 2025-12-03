@@ -31,10 +31,10 @@ export default function StakePage() {
         balanceStr = 'Loading...';
     }
     else if (isError) {
-        balanceStr = 'Error fetching balance';
+        balanceStr = '0.0000';
     }
     else if (!balanceData) {
-        balanceStr = 'No balance data';
+        balanceStr = '0.0000';
     }
     else {
         const balance:string = Number(formatUnits(balanceData.value, balanceData.decimals ?? 18)).toFixed(4);
