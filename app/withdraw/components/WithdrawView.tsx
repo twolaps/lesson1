@@ -4,7 +4,7 @@ import { ETHERS_UNSTAKE_SUCCESS_EVENT, eventBus } from "@/tool/EventBus";
 import { Box, Button, Grid, Stack, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { Address } from "viem";
-import { useReadContract, useWaitForTransactionReceipt, useWriteContract } from "wagmi";
+import { useAccount, useReadContract, useWaitForTransactionReceipt, useWriteContract } from "wagmi";
 
 interface WithdrawViewProps {
     amount?: string;
@@ -23,6 +23,7 @@ type PoolInfo = [
 const BLOCK_TIME_SECONDS: number = 12;
 
 export default function WithdrawView({ amount }: WithdrawViewProps) {
+    const { isConnected } = useAccount();
     const { writeContractAsync } = useWriteContract();
     const [btnEnabled, setBtnEnabled] = useState<boolean>(true);
     const [txHash, setTxHash] = useState<`0x${string}` | undefined>(undefined);
@@ -34,6 +35,11 @@ export default function WithdrawView({ amount }: WithdrawViewProps) {
 
 
     const onClickWithdraw = async() => {
+        if(!isConnected) {
+            alert("请先连接钱包");
+            return;
+        }
+        
         // Add withdraw logic here
         if (!amount || amount === "0.0000") {
             alert("没有可提现的金额");

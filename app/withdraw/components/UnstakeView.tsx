@@ -4,13 +4,14 @@ import { ETHERS_UNSTAKE_SUCCESS_EVENT, eventBus } from "@/tool/EventBus";
 import { Button, InputAdornment, TextField, Typography } from "@mui/material"
 import { useEffect, useState } from "react";
 import { parseEther } from "viem";
-import { useWaitForTransactionReceipt, useWriteContract } from "wagmi";
+import { useAccount, useWaitForTransactionReceipt, useWriteContract } from "wagmi";
 
 interface UnstakeViewProps {
     stakedAmount?: bigint | unknown;
 }
 
 export default function UnstakeView({stakedAmount}: UnstakeViewProps) {
+    const {isConnected} = useAccount();
     const [amount, setAmount] = useState<string>('0');
     const [btnEnabled, setBtnEnabled] = useState<boolean>(true);
     const {writeContractAsync} = useWriteContract();
@@ -28,6 +29,11 @@ export default function UnstakeView({stakedAmount}: UnstakeViewProps) {
 
     const onClickUnstake = async () => {
         console.log('点击了 Unstake 按钮');
+
+        if (!isConnected) {
+            alert("请先连接钱包");
+            return;
+        }
 
         if (!stakedAmount || stakedAmount === BigInt(0)) {
             alert("您没有可解除质押的金额");
