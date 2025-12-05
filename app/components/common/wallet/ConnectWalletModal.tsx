@@ -1,6 +1,8 @@
 import { Dialog, DialogContent, DialogTitle, IconButton, List, ListItem, ListItemButton } from "@mui/material";
 import Image from "next/image";
 import { ProviderType, WalletProvider, walletProviders, WalletType } from "./GetProvide";
+import { useContext } from "react";
+import { AddressContext } from "./context/AddressContext";
 
 interface ConnectWalletModalProps {
     isOpen: boolean;
@@ -8,6 +10,9 @@ interface ConnectWalletModalProps {
 }
 
 export const ConnectWalletModal = ({ isOpen, onClose }: ConnectWalletModalProps)=> {
+
+    const { setAddress } = useContext(AddressContext);
+
     const onCloseDialog = ()=> {
         // Currently does nothing; modal remains open
         if (onClose) {
@@ -33,6 +38,11 @@ export const ConnectWalletModal = ({ isOpen, onClose }: ConnectWalletModalProps)
 
                 console.log(`✅ ${name} 已连接成功！`);
                 console.log("连接的账户:", accounts);
+
+                if (accounts instanceof Array && accounts.length > 0) {
+                    setAddress(accounts[0]);
+                }
+
             } catch (error) {
                 console.error(`❌ 连接 ${name} 失败:`, error);
             }

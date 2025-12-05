@@ -1,9 +1,69 @@
-import { Button } from "@mui/material";
+import { bigintToString, truncateString } from "@/tool/StringUtils";
+import { KeyboardArrowDown } from "@mui/icons-material";
+import { Box, Button, Typography } from "@mui/material";
+import { useState } from "react";
+import { useAccount } from "wagmi";
+import { ConnectInfoModal } from "./ConnectInfoModal";
 
-export const CustomConnectedView = ()=> {
+interface CustomConnectedViewProps {
+    balanceETH: bigint;
+}
+
+export const CustomConnectedView = ({ balanceETH }: CustomConnectedViewProps)=>{
+
+    const {address: userAddress} = useAccount();
+    const [open, setOpen] = useState(false);
+
+    const onClickConnected = () => {
+        setOpen(!open);
+    };
+
     return (
         <div>
-           <Button sx={{margin: "1rem 1rem", width:"245px", height:"50px"}} variant="outlined" disabled>已连接</Button>
+           <Button
+                onClick={onClickConnected}
+                sx={{
+                    margin: "2rem 2rem", 
+                    width:"245px", 
+                    height:"45px", 
+                    borderRadius: "12px",
+                    backgroundColor: "white",
+                    display: "flex",
+                    justifyContent: "space-between"}} 
+                >
+                <Typography sx={{
+                    color: "black", 
+                    fontSize: "14px",
+                    fontWeight:"700"
+                }}>
+                    {bigintToString(balanceETH, 4)} ETH
+                </Typography>
+
+
+                <Box sx={{
+                    width: "150px",
+                    height: "35px",
+                    display: "flex",
+                    alignItems: "center",
+                    padding: "0 10px",
+                    borderRadius: "12px",
+                    backgroundColor: "#e5e5e5",
+                    color: "black",
+                    fontSize: "14px",
+                    fontWeight:"700"}}>
+
+                    <Typography sx={{
+                        fontWeight:"700"
+                    }}>
+                        {truncateString(userAddress, 5, 5)}
+                    </Typography>
+                    
+                    <KeyboardArrowDown/>
+                </Box>
+            </Button>
+
+
+            <ConnectInfoModal isOpen={open} onClose={onClickConnected} address={userAddress}/>
         </div>
     );
 }
