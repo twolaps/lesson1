@@ -1,4 +1,4 @@
-import { bigintToString, truncateString } from "@/tool/StringUtils";
+import { truncateString } from "@/tool/StringUtils";
 import { Box, Dialog, IconButton, Typography } from "@mui/material"
 
 interface ConnectWalletModalProps {

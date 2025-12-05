@@ -3,9 +3,6 @@ import { ConnectWalletModal } from "./ConnectWalletModal";
 import { useContext, useEffect, useState } from "react";
 import { addProvidersListeners, removeProvidersListeners } from "./GetProvide";
 import { CustomConnectedView } from "./CustomConnectedView";
-import { useAccount } from "wagmi";
-import { stringToBigint } from "@/tool/StringUtils";
-import { BalanceContext, BalanceProvider } from "./context/BalanceContext";
 import { AddressContext } from "./context/AddressContext";
 import { isAddress } from "viem";
 
@@ -18,7 +15,6 @@ export const CustomConnectButton = ()=>{
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
     const [connectStatus, setConnectStatus] = useState<ConnectStatus>(ConnectStatus.NotConnected);
     const [userBalance, setUserBalance] = useState<bigint>(BigInt(0));
-    const {setBalance} = useContext(BalanceContext);
     const {address: userAddress, setAddress} = useContext(AddressContext);
 
     const onClickConnect = ()=>{
