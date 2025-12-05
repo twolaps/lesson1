@@ -1,4 +1,4 @@
-import { Dialog, DialogContent, DialogTitle, IconButton, List, ListItem, ListItemButton, SvgIcon } from "@mui/material";
+import { Dialog, DialogContent, DialogTitle, IconButton, List, ListItem, ListItemButton } from "@mui/material";
 import Image from "next/image";
 import { ProviderType, WalletProvider, walletProviders, WalletType } from "./GetProvide";
 
