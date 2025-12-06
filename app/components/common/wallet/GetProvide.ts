@@ -7,7 +7,8 @@ export type ProviderType = {
 export enum WalletType {
     METAMASK = "MetaMask",
     OKX = "OKX Wallet",
-    COINBASE = "Coinbase Wallet"
+    COINBASE = "Coinbase Wallet",
+    PHANTOM = "Phantom"
     // 可以根据需要添加更多钱包类型
 }
 
@@ -38,9 +39,9 @@ function onProviderAnnounce(event: CustomEvent<ProviderType>) {
 
 export const getCurrentProvider = (): WalletProvider | undefined => {
     const connectedWallet = localStorage.getItem("connectedWallet") as WalletType | null;
-    const providrType: ProviderType | undefined = connectedWallet ? walletProviders.get(connectedWallet) : undefined;
-    if (connectedWallet && providrType) {
-        return providrType.provider;
+    const providerType: ProviderType | undefined = connectedWallet ? walletProviders.get(connectedWallet) : undefined;
+    if (connectedWallet && providerType) {
+        return providerType.provider;
     }
     else {
         return undefined;
@@ -60,3 +61,43 @@ export function removeProvidersListeners() {
     window.removeEventListener("eip6963:announceProvider", onProviderAnnounce as EventListener);
     walletProviders.clear(); // 清空已存储的提供者
 }
+
+
+export const getCurrentChainId = async (): Promise<string> => {
+    try {
+        const provider = getCurrentProvider();
+        if (provider) {
+            const chainId: string = await provider.request({
+                method: "eth_chainId"
+            }) as string;
+
+            console.log("当前 chainId:", chainId);
+            return chainId;
+        }
+        else {
+            return "";
+        }
+    } catch (error) {
+        console.log("查询 chainId 失败:", error);
+        return "";
+    }
+};
+
+export const switchToSepolia = async () => {
+    try {
+        const provider = getCurrentProvider();
+        if (provider) {
+            await provider.request({
+                method: "wallet_switchEthereumChain",
+                params: [{ chainId: "0xaa36a7" }] // Sepolia 的 chainId（十六进制）
+            });
+            console.log("✅ 已切换到 Sepolia");
+        }
+        else {
+            console.log("❌ 未检测到 提供程序。请确保已安装并启用 扩展程序。");
+        }
+        
+    } catch (error) {
+        console.error("❌ 切换到 Sepolia 失败:", error);
+    }
+};

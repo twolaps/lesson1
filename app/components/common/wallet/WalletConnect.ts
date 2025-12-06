@@ -1,4 +1,4 @@
-import { WalletProvider, walletProviders, WalletType } from "./GetProvide";
+import { getCurrentChainId, WalletProvider, walletProviders, WalletType } from "./GetProvide";
 
 /**
  * 连接metamask钱包
@@ -7,7 +7,6 @@ import { WalletProvider, walletProviders, WalletType } from "./GetProvide";
 export const connectMetamask = async (setAddress: (address: `0x${string}`) => void) => {
     try {
         const targetProvider: WalletProvider = walletProviders.get(WalletType.METAMASK)?.provider as WalletProvider;
-
         if (targetProvider) {
             const accounts = await targetProvider.request({
                 method: "eth_requestAccounts" 
@@ -86,3 +85,39 @@ export const connectCoinbaseWallet = async (setAddress: (address: `0x${string}`)
     }
 }
 
+declare global {
+    interface Window {
+        solana?: any;
+    }
+}
+
+export const connectPhantomWallet = async (setAddress: (address: `0x${string}`) => void) => {
+     try {
+        const a = walletProviders.get(WalletType.METAMASK);
+        const b = walletProviders.get(WalletType.OKX);
+        const c = walletProviders.get(WalletType.COINBASE);
+        const d = walletProviders.get(WalletType.PHANTOM);
+        const e = walletProviders.size;
+        const targetProvider: WalletProvider = walletProviders.get(WalletType.PHANTOM)?.provider as WalletProvider;
+        if (targetProvider) {
+            const accounts = await targetProvider.request({
+                method: "eth_requestAccounts" 
+            });
+
+            console.log(`✅ Phantom Wallet 已连接成功！`);
+            console.log("连接的账户:", accounts);
+            localStorage.setItem("connectedWallet", WalletType.PHANTOM);
+
+            if (accounts instanceof Array && accounts.length > 0) {
+                setAddress(accounts[0]);
+            }
+        }
+        else {
+            console.error("❌ 未检测到 Phantom Wallet 提供程序。请确保已安装并启用 Phantom Wallet 扩展程序。");
+        }
+
+    } catch (error) {
+        console.error(`❌ 连接 Phantom Wallet 失败:`, error);
+    }
+
+}

@@ -1,7 +1,7 @@
 
 import { Button, TextField} from "@mui/material";
 import styles from '@/styles/view.module.css';
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAccount, useBalance, useSendTransaction, useWaitForTransactionReceipt } from "wagmi";
 import { isAddress, parseEther } from "viem";
 
@@ -11,6 +11,7 @@ export const TransactView = ()=>{
     const [recipient, setRecipient] = useState('');
     const [amount, setAmount] = useState('');
     const {data: txHash, sendTransaction} = useSendTransaction();
+    const {refetch: refetchBalance} = useBalance({address});
     const { 
         isSuccess: isReceiptSuccess, 
         isError: isReceiptError, 
@@ -18,10 +19,6 @@ export const TransactView = ()=>{
     } = useWaitForTransactionReceipt({ hash: txHash });
 
     const {data: balanceData} = useBalance({address});
-
-    if (isReceiptSuccess) {
-        alert("转账成功！");
-    }
 
     const onClickTransact = ()=>{
         console.log(recipient, amount);
@@ -63,6 +60,15 @@ export const TransactView = ()=>{
         setAmount(event.target.value);
         console.log(event.target.value);
     }
+
+
+    useEffect(() => {
+        if (isReceiptSuccess) {
+            refetchBalance();
+        } else if (isReceiptError) {
+            console.log("转账失败:", receiptError);
+        }
+    }, [isReceiptSuccess, isReceiptError, receiptError, refetchBalance]);
 
     return (
         <div>

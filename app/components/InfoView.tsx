@@ -7,7 +7,6 @@ export const InfoView = ()=>{
 
     const {address} = useAccount();
     const {data, isLoading, isError} = useBalance({address});
-
     const balance = data?.value ? formatUnits(data.value, data.decimals ?? 18) : undefined;
 
     let balanceStr: string = '';
@@ -26,8 +25,6 @@ export const InfoView = ()=>{
     else {
         balanceStr = balance ?? '0';
     }
-
-
 
     return (
         <div>

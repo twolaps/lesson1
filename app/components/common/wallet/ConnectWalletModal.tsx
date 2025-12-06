@@ -2,9 +2,9 @@ import { Dialog, DialogContent, DialogTitle, IconButton, List, ListItem, ListIte
 import Image from "next/image";
 import { useContext, useEffect } from "react";
 import { AddressContext } from "./context/AddressContext";
-import { connectMetamask, connectOKXWallet } from "./WalletConnect";
+import { connectCoinbaseWallet, connectMetamask, connectOKXWallet, connectPhantomWallet } from "./WalletConnect";
 import { BalanceContext } from "./context/BalanceContext";
-import { getCurrentProvider } from "./GetProvide";
+import { getCurrentChainId, getCurrentProvider, WalletType } from "./GetProvide";
 
 interface ConnectWalletModalProps {
     isOpen: boolean;
@@ -32,26 +32,37 @@ export const ConnectWalletModal = ({ isOpen, onClose }: ConnectWalletModalProps)
         }
     }
 
-    const onClickMetaMask = async ()=> {
-        // Logic to connect to MetaMask goes here
-        console.log("Connecting to MetaMask...");
-        await connectMetamask(setAddress);
+    const onClickCommon = async (event: React.MouseEvent<HTMLDivElement, MouseEvent>)=>{
+        const targetId: string = (event.currentTarget as HTMLDivElement).id;
+        if (targetId === WalletType.METAMASK) {
+            await connectMetamask(setAddress);
+        }
+        else if (targetId === WalletType.OKX) {
+            await connectOKXWallet(setAddress);
+        }
+        else if (targetId === WalletType.COINBASE) {
+            await connectCoinbaseWallet(setAddress);
+        }
+        else if (targetId === WalletType.PHANTOM) {
+            await connectPhantomWallet(setAddress);
+        }
+        else {
+            console.log("未识别的钱包类型");
+            onCloseDialog();
+            return;
+        }
+
         const targetProvider = getCurrentProvider();
         if (targetProvider) {
             targetProvider.on('accountsChanged', onAccountChange);
         }
-
         onCloseDialog();
     }
 
-    const onClickOKX = async ()=> {
-        // Logic to connect to OKX Wallet goes here
-        console.log("Connecting to OKX Wallet...");
-        await connectOKXWallet(setAddress);
-        const targetProvider = getCurrentProvider();
-        if (targetProvider) {
-            targetProvider.on('accountsChanged', onAccountChange);
-        }
+    const onClickPhantom = async ()=> {
+        // Logic to connect to Phantom Wallet goes here
+        console.log("Connecting to Phantom Wallet...");
+        await connectPhantomWallet(setAddress);
         onCloseDialog();
     }
 
@@ -66,11 +77,11 @@ export const ConnectWalletModal = ({ isOpen, onClose }: ConnectWalletModalProps)
     }, []);
 
     return (
-        <Dialog open={isOpen} slotProps ={{
+        <Dialog open={isOpen} onClose={onCloseDialog} slotProps ={{
             paper: {
                 sx: { 
                     width: '500px',
-                    height: '400px',
+                    height: '440px',
                     padding: '1rem',
                     backgroundColor: (theme) => theme.palette.background.paper,
                 }
@@ -98,15 +109,29 @@ export const ConnectWalletModal = ({ isOpen, onClose }: ConnectWalletModalProps)
             <DialogContent>
                 <List sx={{display: 'flex', flexDirection: 'column', gap: 2, alignItems: 'center'}}>
                     <ListItem sx={{width: "auto"}}>
-                        <ListItemButton onClick={onClickMetaMask}>
-                            <Image src="https://upload.wikimedia.org/wikipedia/commons/3/36/MetaMask_Fox.svg" alt="" style={{ marginRight: 8 }} width="32" height="32"/>
+                        <ListItemButton id={WalletType.METAMASK} onClick={onClickCommon}>
+                            <Image src="MetaMask_Fox.svg" alt="" style={{ marginRight: 8 }} width="32" height="32"/>
                             MetaMask
                         </ListItemButton>
                     </ListItem>
                     <ListItem sx={{width: "auto"}}>
-                        <ListItemButton onClick={onClickOKX}>
-                            <Image src ="https://upload.wikimedia.org/wikipedia/commons/e/e4/OKX_Logo.svg" alt="" style={{ marginRight: 8 }} width="32" height="32"/>
+                        <ListItemButton id={WalletType.OKX} onClick={onClickCommon}>
+                            <Image src ="OKX_Logo.svg" alt="" style={{ marginRight: 8 }} width="32" height="32"/>
                             OKX Wallet
+                        </ListItemButton>
+                    </ListItem>
+
+                    <ListItem sx={{width: "auto"}}>
+                        <ListItemButton id={WalletType.COINBASE} onClick={onClickCommon}>
+                            <Image src ="COIN-6f1ac628.svg" alt="" style={{ marginRight: 8 }} width="32" height="32"/>
+                            Coinbase Wallet
+                        </ListItemButton>
+                    </ListItem>
+
+                    <ListItem sx={{width: "auto"}}>
+                        <ListItemButton onClick={onClickPhantom}>
+                            <Image src ="Phantom_SVG_Icon.svg" alt="" style={{ marginRight: 8 }} width="32" height="32"/>
+                            Phantom
                         </ListItemButton>
                     </ListItem>
                 </List>
