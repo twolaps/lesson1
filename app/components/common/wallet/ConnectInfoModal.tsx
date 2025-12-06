@@ -1,15 +1,18 @@
-import { truncateString } from "@/tool/StringUtils";
+import { bigintToString, truncateString } from "@/tool/StringUtils";
 import { Box, Dialog, IconButton, Typography } from "@mui/material"
+import { CopyAddressButton } from "./CopyAddressButton";
+import { DisconnectButton } from "./DisconnectButton";
 
 interface ConnectWalletModalProps {
     isOpen: boolean;
     onClose: () => void;
     address: `0x${string}` | undefined;
+    balance: bigint;
 }
 
-export const ConnectInfoModal = ({ isOpen, onClose, address }: ConnectWalletModalProps) => {
+export const ConnectInfoModal = ({ isOpen, onClose, address, balance }: ConnectWalletModalProps) => {
 
-    const onCloseClose = () => {
+    const onClickClose = () => {
         // Currently does nothing; modal remains open
         if (onClose) {
             onClose();
@@ -29,7 +32,7 @@ export const ConnectInfoModal = ({ isOpen, onClose, address }: ConnectWalletModa
         }}>
             <IconButton
                 aria-label="close"
-                onClick={onCloseClose}
+                onClick={onClickClose}
                 sx={{
                     position: 'absolute',
                     right: 8,
@@ -41,12 +44,28 @@ export const ConnectInfoModal = ({ isOpen, onClose, address }: ConnectWalletModa
                 X
             </IconButton>
 
-            <Box>
-                <Typography>
+            <Box sx={{
+                gap: 2,
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
+                height: "100%",
+            }}>
+                <Typography variant="h5">
                     {truncateString(address, 4, 4)}
                 </Typography>
-            </Box>
+                <Typography>
+                   {bigintToString(balance, 4)} ETH
+                </Typography>
 
+                <Box sx={{
+                    display: "flex",
+                    gap: 2}}>
+                    <CopyAddressButton address={address!} />
+                    <DisconnectButton onClose={onClickClose} address={address} />
+                </Box>
+            </Box>
         </Dialog>);
 }
 

@@ -2,16 +2,15 @@ import { bigintToString, truncateString } from "@/tool/StringUtils";
 import { KeyboardArrowDown } from "@mui/icons-material";
 import { Box, Button, Typography } from "@mui/material";
 import { useState } from "react";
-import { useAccount } from "wagmi";
 import { ConnectInfoModal } from "./ConnectInfoModal";
 
 interface CustomConnectedViewProps {
     balanceETH: bigint;
+    address: `0x${string}`;
 }
 
-export const CustomConnectedView = ({ balanceETH }: CustomConnectedViewProps)=>{
+export const CustomConnectedView = ({ balanceETH, address: userAddress }: CustomConnectedViewProps)=>{
 
-    const {address: userAddress} = useAccount();
     const [open, setOpen] = useState(false);
 
     const onClickConnected = () => {
@@ -63,7 +62,7 @@ export const CustomConnectedView = ({ balanceETH }: CustomConnectedViewProps)=>{
             </Button>
 
 
-            <ConnectInfoModal isOpen={open} onClose={onClickConnected} address={userAddress}/>
+            <ConnectInfoModal isOpen={open} onClose={onClickConnected} address={userAddress} balance={balanceETH}/>
         </div>
     );
 }
