@@ -1,16 +1,21 @@
-
 export type ProviderType = {
-    info: WalletInfo,
-    provider: WalletProvider
+  info: WalletInfo,
+  provider: WalletProvider
 }
 
 export enum WalletType {
-    METAMASK = "MetaMask",
-    OKX = "OKX Wallet",
-    COINBASE = "Coinbase Wallet",
-    PHANTOM = "Phantom"
-    // 可以根据需要添加更多钱包类型
+  METAMASK = "MetaMask",
+  OKX = "OKX Wallet",
+  COINBASE = "Coinbase Wallet",
+  PHANTOM = "Phantom"
+  // 可以根据需要添加更多钱包类型
 }
+
+
+export const chainMap: Map<number, string> = new Map<number, string>([
+	[1, "Ethereum"],
+	[11155111, "Sepolia"],
+]);
 
 export interface WalletInfo {
   name: WalletType;
@@ -38,66 +43,72 @@ function onProviderAnnounce(event: CustomEvent<ProviderType>) {
 }
 
 export const getCurrentProvider = (): WalletProvider | undefined => {
-    const connectedWallet = localStorage.getItem("connectedWallet") as WalletType | null;
-    const providerType: ProviderType | undefined = connectedWallet ? walletProviders.get(connectedWallet) : undefined;
-    if (connectedWallet && providerType) {
-        return providerType.provider;
-    }
-    else {
-        return undefined;
-    }
+  const connectedWallet = localStorage.getItem("connectedWallet") as WalletType | null;
+  const providerType: ProviderType | undefined = connectedWallet ? walletProviders.get(connectedWallet) : undefined;
+  if (connectedWallet && providerType) {
+    return providerType.provider;
+  }
+  else {
+    return undefined;
+  }
 }
 
-
 export function addProvidersListeners() {
-    // 监听钱包广播的事件
+  // 监听钱包广播的事件
 
-    window.addEventListener("eip6963:announceProvider", onProviderAnnounce as EventListener);
-    window.dispatchEvent(new Event("eip6963:requestProvider"));
+  window.addEventListener("eip6963:announceProvider", onProviderAnnounce as EventListener);
+  window.dispatchEvent(new Event("eip6963:requestProvider"));
 }
 
 export function removeProvidersListeners() {
-    // 移除监听器
-    window.removeEventListener("eip6963:announceProvider", onProviderAnnounce as EventListener);
-    walletProviders.clear(); // 清空已存储的提供者
+  // 移除监听器
+  window.removeEventListener("eip6963:announceProvider", onProviderAnnounce as EventListener);
+  walletProviders.clear(); // 清空已存储的提供者
 }
 
-
 export const getCurrentChainId = async (): Promise<string> => {
-    try {
-        const provider = getCurrentProvider();
-        if (provider) {
-            const chainId: string = await provider.request({
-                method: "eth_chainId"
-            }) as string;
+  try {
+    const provider = getCurrentProvider();
+    if (provider) {
+      const chainId: string = await provider.request({
+        method: "eth_chainId"
+      }) as string;
 
-            console.log("当前 chainId:", chainId);
-            return chainId;
-        }
-        else {
-            return "";
-        }
-    } catch (error) {
-        console.log("查询 chainId 失败:", error);
-        return "";
+      console.log("当前 chainId:", chainId);
+      return chainId;
     }
+    else {
+      return "";
+    }
+  } catch (error) {
+    console.log("查询 chainId 失败:", error);
+    return "";
+  }
 };
 
-export const switchToSepolia = async () => {
-    try {
-        const provider = getCurrentProvider();
-        if (provider) {
-            await provider.request({
-                method: "wallet_switchEthereumChain",
-                params: [{ chainId: "0xaa36a7" }] // Sepolia 的 chainId（十六进制）
-            });
-            console.log("✅ 已切换到 Sepolia");
-        }
-        else {
-            console.log("❌ 未检测到 提供程序。请确保已安装并启用 扩展程序。");
-        }
-        
-    } catch (error) {
-        console.error("❌ 切换到 Sepolia 失败:", error);
+/**
+ * 
+ * @param chainId 
+ */
+export const switchToChain = async (chainId: number): Promise<number> => {
+  try {
+    const provider = getCurrentProvider();
+    if (provider) {
+      await provider.request({
+        method: "wallet_switchEthereumChain",
+        params: [{ chainId: "0x" + chainId.toString(16) }] // Sepolia 的 chainId（十六进制）
+      });
+      console.log(`✅ 已切换到 ${chainId}`);
+			return chainId;
     }
-};
+    else {
+      console.log("❌ 未检测到 提供程序。请确保已安装并启用 扩展程序。");
+			const oldId: string = await getCurrentChainId();
+			return Number(oldId);
+    }
+  } catch (error) {
+    console.log("❌ 切换到 Sepolia 失败:", error);
+		const oldId: string = await getCurrentChainId();
+		return Number(oldId);
+  }
+}
