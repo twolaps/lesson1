@@ -16,9 +16,6 @@ export const LinkView = ()=>{
             <Link style={{margin: "0rem 1rem"}} href="/withdraw">
                 <h1>WITHDRAW</h1>
             </Link>
-            <Link style={{margin: "0rem 1rem"}} href="/connect">
-                <h1>CONNECT</h1>
-            </Link>
         </div>
     )
 }

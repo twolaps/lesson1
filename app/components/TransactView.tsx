@@ -1,9 +1,10 @@
 
 import { Button, TextField} from "@mui/material";
 import styles from '@/styles/view.module.css';
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useAccount, useBalance, useSendTransaction, useWaitForTransactionReceipt } from "wagmi";
 import { isAddress, parseEther } from "viem";
+import { BalanceContext } from "./common/wallet/context/BalanceContext";
 
 export const TransactView = ()=>{
     // 状态管理：接收方地址和转账金额
@@ -11,7 +12,7 @@ export const TransactView = ()=>{
     const [recipient, setRecipient] = useState('');
     const [amount, setAmount] = useState('');
     const {data: txHash, sendTransaction} = useSendTransaction();
-    const {refetch: refetchBalance} = useBalance({address});
+    const {refetchBalance} = useContext(BalanceContext);
     const { 
         isSuccess: isReceiptSuccess, 
         isError: isReceiptError, 
@@ -20,7 +21,7 @@ export const TransactView = ()=>{
 
     const {data: balanceData} = useBalance({address});
 
-    const onClickTransact = ()=>{
+    const onClickTransact = async ()=>{
         console.log(recipient, amount);
         if (!isAddress(recipient)) {
             alert('请输入有效的以太坊地址');
@@ -63,12 +64,16 @@ export const TransactView = ()=>{
 
 
     useEffect(() => {
+				console.log("转账结果:", {isReceiptSuccess, isReceiptError, receiptError});
+
         if (isReceiptSuccess) {
+						console.log("转账成功");
             refetchBalance();
+
         } else if (isReceiptError) {
             console.log("转账失败:", receiptError);
         }
-    }, [isReceiptSuccess, isReceiptError, receiptError, refetchBalance]);
+    }, [isReceiptSuccess, isReceiptError, receiptError]);
 
     return (
         <div>

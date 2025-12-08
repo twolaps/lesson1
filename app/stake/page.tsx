@@ -1,23 +1,28 @@
 'use client';
 import { Box, Button, Divider, TextField, Typography } from "@mui/material";
 import { HeadView } from "../components/HeadView";
-import { useAccount, useBalance, useReadContract, useWaitForTransactionReceipt, useWriteContract } from "wagmi";
+import { useAccount, useBalance, useChainId, useReadContract, useWaitForTransactionReceipt, useWriteContract } from "wagmi";
 import { stakeAddress } from "@/constants/address";
 import { stakeAbi } from "@/constants/abi/stakeABI";
 import { formatUnits, parseEther } from "viem";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import ConfirmDialog from "../components/common/ConfirmDialog";
 import PendingRewardView from "./components/PendingRewardView";
+import { BalanceContext } from "../components/common/wallet/context/BalanceContext";
+import { bigintToString } from "@/tool/StringUtils";
+import { ChainContext } from "../components/common/wallet/context/ChainContext";
 
 export default function StakePage() {
     const { address: myAddress } = useAccount();
     const [dialogOpen, setDialogOpen] = useState(false);
     const [amount, setStakeAmount] = useState<string>('');
-    const {data: balanceData, isLoading, isError, refetch: refetchBalance} = useBalance({address: myAddress});
     const [stakeStatus, setStakeStatus] = useState<string>("");
     const {writeContractAsync } = useWriteContract();
     const [txHash, setTxHash] = useState<`0x${string}` | undefined>(undefined);
     const [btnEnabled, setBtnEnabled] = useState<boolean>(true);
+		const {balance, refetchBalance} = useContext(BalanceContext);
+
+		const {chainId} = useContext(ChainContext);
     
     const { 
         isSuccess: isReceiptSuccess, 
@@ -26,27 +31,19 @@ export default function StakePage() {
     } = useWaitForTransactionReceipt({ hash: txHash, query: { enabled: !!txHash } });
 
     
-    let balanceStr: string = '';
-    if (isLoading) {
-        balanceStr = '0.0000';
-    }
-    else if (isError) {
-        balanceStr = '0.0000';
-    }
-    else if (!balanceData) {
-        balanceStr = '0.0000';
-    }
-    else {
-        const balance:string = Number(formatUnits(balanceData.value, balanceData.decimals ?? 18)).toFixed(4);
-        balanceStr = balance;
-    }
+    let balanceStr: string = '0.0000';
+		if (balance) {
+			balanceStr = bigintToString(balance, 4);
+		}
+		
 
     const {data: stakedAmount, refetch: refetchStakedAmount} = useReadContract({
         address: stakeAddress,
         abi: stakeAbi,
         functionName: 'stakingBalance',
         args: [BigInt(0), myAddress!],
-        query: { enabled: !!myAddress }
+        query: { enabled: !!myAddress },
+				chainId
     });
 
     const onChangeAmount = (event: React.ChangeEvent<HTMLInputElement>)=> {
@@ -65,7 +62,7 @@ export default function StakePage() {
         }
 
         try {
-            if (balanceData && parseEther(amount) > balanceData.value) {
+            if (balance && parseEther(amount) > balance) {
                 alert("余额不足");
                 return;
             }
@@ -90,6 +87,7 @@ export default function StakePage() {
                 abi: stakeAbi,
                 functionName: 'depositETH',
                 value: parseEther(amount),
+								chainId
             });
             setTxHash(tx);
         

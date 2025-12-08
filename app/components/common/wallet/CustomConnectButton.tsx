@@ -7,13 +7,14 @@ import { isAddress } from "viem";
 import { addProvidersListeners, getCurrentProvider, removeProvidersListeners } from "./GetProvide";
 import { BalanceContext } from "./context/BalanceContext";
 import { ChainContext } from "./context/ChainContext";
+import { MetaNodeContext } from "./context/MetaNodeContext";
 
 export const CustomConnectButton = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [userBalance, setUserBalance] = useState<bigint>(BigInt(0));
   const { address: userAddress, setAddress } = useContext(AddressContext);
-  const { setBalance } = useContext(BalanceContext);
-	const { setChainId } = useContext(ChainContext);
+  const { balance: userBalance, setBalance, refetchBalance: fetchBalance } = useContext(BalanceContext);
+	const { metaNodeBalance } = useContext(MetaNodeContext);
+	const { chainId, setChainId } = useContext(ChainContext);
 
   const onClickConnect = () => {
     setIsModalOpen(true);
@@ -21,25 +22,6 @@ export const CustomConnectButton = () => {
 
   const onCloseModal = () => {
     setIsModalOpen(false);
-  };
-
-  const checkBalance = async () => {
-    if (window && window.ethereum) {
-      try {
-        console.log("检查账户余额...");
-        console.log("当前账户地址:", userAddress);
-        const targetProvider = getCurrentProvider();
-        const balanceStr: string = await targetProvider?.request({
-          method: "eth_getBalance",
-          params: [userAddress!, "latest"]
-        }) as string;
-        console.log("账户余额:", balanceStr);
-
-        setUserBalance(BigInt(balanceStr));
-      } catch (error) {
-        console.log("账户余额失败:", error);
-      }
-    }
   };
 
   useEffect(() => {
@@ -93,10 +75,10 @@ export const CustomConnectButton = () => {
 
   useEffect(() => {
     if (isAddress(userAddress)) {
-      checkBalance();
+      fetchBalance();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userAddress]);
+  }, [userAddress, chainId]);
 
   return (
     <div>
@@ -107,7 +89,7 @@ export const CustomConnectButton = () => {
 
       {
         isAddress(userAddress) &&
-        <CustomConnectedView balanceETH={userBalance} address={userAddress} />
+        <CustomConnectedView balanceETH={userBalance} address={userAddress} metaNodeBalance={metaNodeBalance} />
       }
 
       <ConnectWalletModal isOpen={isModalOpen} onClose={onCloseModal} />

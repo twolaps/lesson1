@@ -1,22 +1,20 @@
+import { BalanceContext } from '@/app/components/common/wallet/context/BalanceContext';
+import { getCurrentProvider } from '@/app/components/common/wallet/GetProvide';
 import styles from '@/styles/view.module.css';
-import { ETHERS_TRANSACT_EVENT, eventBus } from '@/tool/EventBus';
 import { Button, TextField } from '@mui/material';
 import { TransactionResponse } from 'ethers';
 import { JsonRpcSigner } from 'ethers';
 import { parseEther } from 'ethers';
 import { BrowserProvider } from 'ethers';
 import { ethers, isAddress } from 'ethers';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 
-interface EthersTransactViewProps {
-    address: string;
-}
-
-export const EthersTransactView = ({ address }: EthersTransactViewProps)=> {
+export const EthersTransactView = ()=> {
     
     const [recipient, setRecipient] = useState('');
     const [amount, setAmount] = useState('');
     const [transactStatus, setTransactStatus] = useState('');
+		const {balance, refetchBalance} = useContext(BalanceContext);
 
     const onChangeRecipient = (event: React.ChangeEvent<HTMLInputElement>)=>{
         setRecipient(event.target.value);
@@ -34,9 +32,15 @@ export const EthersTransactView = ({ address }: EthersTransactViewProps)=> {
             alert('请先安装并登录 MetaMask 钱包');
             return;
         }
+
+				const eip1193Provider = getCurrentProvider();
+				if (!eip1193Provider) {
+						alert('未检测到 提供程序。请确保已安装并启用 扩展程序。');
+						return;
+				}
         
-        const provider: BrowserProvider = new BrowserProvider(window?.ethereum);
-        const balance: bigint = await provider.getBalance(address);
+        const provider: BrowserProvider = new BrowserProvider(eip1193Provider);
+				
         if (!isAddress(recipient)) {
             alert('请输入有效的以太坊地址');
             return;
@@ -59,7 +63,6 @@ export const EthersTransactView = ({ address }: EthersTransactViewProps)=> {
         }
 
         console.log('发起转账:', {to: recipient, value: amountWei.toString()});
-
         const signer: JsonRpcSigner = await provider.getSigner();
         const tx: TransactionResponse =  await signer.sendTransaction({
             to: recipient,
@@ -70,7 +73,7 @@ export const EthersTransactView = ({ address }: EthersTransactViewProps)=> {
         const receipt: ethers.TransactionReceipt | null = await tx.wait();
         if (receipt && receipt.status == 1) {
             setTransactStatus("交易确认成功！");
-            eventBus.emit(ETHERS_TRANSACT_EVENT);
+						refetchBalance();
             alert("转账成功！");
         } else {
             setTransactStatus("交易确认失败！");

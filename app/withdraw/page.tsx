@@ -39,7 +39,6 @@ export default function WithdrawPage() {
     });
 
     const withdrawAmountData: bigint[] = withdrawAmount as [bigint, bigint];
-    console.log(withdrawAmountData);
     const requestAmount: bigint = withdrawAmount ? BigInt(withdrawAmountData[0]) : BigInt(0);
     const pendingWithdrawAmount: bigint = withdrawAmount ? BigInt(withdrawAmountData[1]) : BigInt(0);
     const availableToWithdrawStr: string = parseFloat(formatUnits(pendingWithdrawAmount, 18)).toFixed(4);

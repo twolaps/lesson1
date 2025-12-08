@@ -8,6 +8,7 @@ import { TransactionResponse } from "ethers";
 import { ETHERS_CONTRACT_TRANSACT_EVENT, eventBus } from "@/tool/EventBus";
 import { erc20Abi2 } from "@/constants/abi/erc20ABI";
 import { contractAddress } from "@/constants/address";
+import { getCurrentProvider } from "@/app/components/common/wallet/GetProvide";
 
 export const EthersContractTransactView = ()=>{
     // 状态管理：接收方地址和转账金额
@@ -28,7 +29,14 @@ export const EthersContractTransactView = ()=>{
             return;
         }
 
-        const provider: BrowserProvider = new BrowserProvider(window?.ethereum);
+				const eip1193Provider = getCurrentProvider();
+				if (!eip1193Provider) {
+						alert('未检测到 提供程序。请确保已安装并启用 扩展程序。');
+						return;
+				}
+
+
+        const provider: BrowserProvider = new BrowserProvider(eip1193Provider);
         const signer:JsonRpcSigner = await provider.getSigner();
         const contract: Contract = new Contract(contractAddress, erc20Abi2, signer);
         try {

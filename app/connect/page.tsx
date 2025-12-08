@@ -8,15 +8,9 @@ import { HeadView } from "../components/HeadView";
 export default function ConnectPage() {
   return (
     <div>
-        <HeadView/>
-        <hr/>
-        <AddressProvider>
-          <BalanceProvider>
-            <ChainProvider>
-              <CustomConnectButton />
-            </ChainProvider>
-          </BalanceProvider>
-        </AddressProvider>
+			<HeadView/>
+			<hr/>
+			<CustomConnectButton />
     </div>
   )
 }

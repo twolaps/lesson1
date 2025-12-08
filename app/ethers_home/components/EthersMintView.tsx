@@ -8,6 +8,7 @@ import { Signer } from 'ethers';
 import { ETHERS_MINT_EVENT, eventBus } from '@/tool/EventBus';
 import { erc20Abi2 } from '@/constants/abi/erc20ABI';
 import { contractAddress } from '@/constants/address';
+import { getCurrentProvider } from '@/app/components/common/wallet/GetProvide';
 
 export const EthersMintView = ()  => {
     const [amount, setAmount] = useState<number>(0);
@@ -23,17 +24,18 @@ export const EthersMintView = ()  => {
     const onClickMint = async () => {
         console.log('点击了 Mint 按钮');
 
-        if (typeof window === 'undefined' || !window.ethereum) {
-            return;
-        }
-
         if (amount <= 0) {
             alert("请输入有效的铸币数量");
             return;
         }
 
 
-        const provider: BrowserProvider = new BrowserProvider(window.ethereum);
+				const eip1193Provider = getCurrentProvider();
+				if (!eip1193Provider) {
+					alert('未检测到 提供程序。请确保已安装并启用 扩展程序。');
+					return;
+				}
+        const provider: BrowserProvider = new BrowserProvider(eip1193Provider);
         const signer: Signer = await provider.getSigner();
         const contract:Contract = new Contract(contractAddress, erc20Abi2, signer);
         try {

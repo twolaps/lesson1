@@ -7,6 +7,10 @@ import { http, WagmiProvider } from 'wagmi';
 import { mainnet, sepolia } from 'wagmi/chains';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'; // 注意导入来源
 import { createTheme, ThemeProvider } from "@mui/material";
+import { AddressProvider } from "./components/common/wallet/context/AddressContext";
+import { BalanceProvider } from "./components/common/wallet/context/BalanceContext";
+import { ChainProvider } from "./components/common/wallet/context/ChainContext";
+import { WalletProviders } from "./components/common/wallet/context/WalletProviders";
 
 // 1. 创建 Wagmi 客户端配置
 const config = getDefaultConfig({
@@ -37,7 +41,9 @@ export default function RootLayout({children}: Readonly<{children: React.ReactNo
           <WagmiProvider config={config}>
             <QueryClientProvider client={queryClient}>
               <RainbowKitProvider>
-                  {children}
+								<WalletProviders>
+									{children}
+								</WalletProviders>
               </RainbowKitProvider>
             </QueryClientProvider>
           </WagmiProvider>

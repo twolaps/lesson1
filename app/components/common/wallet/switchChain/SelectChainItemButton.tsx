@@ -3,6 +3,7 @@ import Image from "next/image";
 import { switchToChain } from "../GetProvide";
 import { useContext } from "react";
 import { ChainContext } from "../context/ChainContext";
+import { BalanceContext } from "../context/BalanceContext";
 interface SelectChainItemButtonProps {
   txt: string;
   chainId: number;

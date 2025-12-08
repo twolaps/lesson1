@@ -1,24 +1,26 @@
+import { AddressContext } from "@/app/components/common/wallet/context/AddressContext";
+import { getCurrentChainId, getCurrentProvider } from "@/app/components/common/wallet/GetProvide";
 import { contractAddress } from "@/constants/address";
 import { ETHERS_CONTRACT_TRANSACT_EVENT, ETHERS_MINT_EVENT, eventBus } from "@/tool/EventBus";
 import { Contract, formatUnits } from "ethers";
 import { BrowserProvider } from "ethers";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useContext, useEffect, useState } from "react";
 import { erc20Abi } from "viem";
 
-interface EthersContractInfoViewProps {
-    address: string;
-}
-
-export const EthersContractInfoView = ({ address }: EthersContractInfoViewProps)=> {
+export const EthersContractInfoView = ()=> {
+    const {address} = useContext(AddressContext);
     const [balanceTxt, setBalanceTxt] = useState('my_balance: 余额加载中...');
     const [contractBalanceTxt, setContractBalanceTxt] = useState("contract_balance: 余额加载中...");
 
     useEffect(()=>{
         const fetchBalance = async (title:string, checkAddress: string, setFunction:Dispatch<SetStateAction<string>>) => {
-            if (typeof window === 'undefined' || !window.ethereum) {
-                return;
-            }
-            const provider: BrowserProvider = new BrowserProvider(window.ethereum);
+						const eip1193Provider = getCurrentProvider();
+						if (!eip1193Provider) {
+								alert('未检测到 提供程序。请确保已安装并启用 扩展程序。');
+								return;
+						}
+
+            const provider: BrowserProvider = new BrowserProvider(eip1193Provider);
             const contract:Contract = new Contract(contractAddress, erc20Abi, provider);
             try {
                 const balance: bigint = await contract.balanceOf(checkAddress);
