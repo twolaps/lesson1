@@ -7,9 +7,6 @@ import { http, WagmiProvider } from 'wagmi';
 import { mainnet, sepolia } from 'wagmi/chains';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'; // 注意导入来源
 import { createTheme, ThemeProvider } from "@mui/material";
-import { AddressProvider } from "./components/common/wallet/context/AddressContext";
-import { BalanceProvider } from "./components/common/wallet/context/BalanceContext";
-import { ChainProvider } from "./components/common/wallet/context/ChainContext";
 import { WalletProviders } from "./components/common/wallet/context/WalletProviders";
 
 // 1. 创建 Wagmi 客户端配置
@@ -19,7 +16,7 @@ const config = getDefaultConfig({
   chains: [mainnet, sepolia],
   ssr: true, // 如果你的应用使用了服务端渲染
   transports: {
-    [mainnet.id]: http('https://eth.rpc.blxrbdn.com'),
+    [mainnet.id]: http('https://eth-mainnet.g.alchemy.com/v2/EI-sjwkwnRwHeb_D6_FsC'),
     [sepolia.id]: http('https://eth-sepolia.g.alchemy.com/v2/EI-sjwkwnRwHeb_D6_FsC'),
   },
 });

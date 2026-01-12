@@ -8,7 +8,8 @@ import { BalanceContext } from "./common/wallet/context/BalanceContext";
 
 export const TransactView = ()=>{
     // 状态管理：接收方地址和转账金额
-    const {address} = useAccount();
+    const {address, isConnected} = useAccount();
+		console.log("TransactView 渲染，用户地址:", address, "连接状态:", isConnected);
     const [recipient, setRecipient] = useState('');
     const [amount, setAmount] = useState('');
     const {data: txHash, sendTransaction} = useSendTransaction();
