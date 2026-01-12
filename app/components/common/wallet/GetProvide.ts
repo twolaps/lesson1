@@ -18,7 +18,8 @@ export enum WalletType {
   METAMASK = "MetaMask",
   OKX = "OKX Wallet",
   COINBASE = "Coinbase Wallet",
-  PHANTOM = "Phantom"
+  PHANTOM = "Phantom",
+	MY_WALLET = "My Wallet",
   // 可以根据需要在此添加更多支持的钱包
 }
 
